@@ -50,6 +50,6 @@ public class T2<A, B> extends AbstractTuple {
     return b;
   }
 
-  public final A a;
-  public final B b;
+  public A a;
+  public B b;
 }
