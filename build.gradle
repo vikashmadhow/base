@@ -1,0 +1,58 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'idea'
+}
+
+group 'ma.vi.base'
+version '0.1.0'
+
+sourceCompatibility = JavaVersion.VERSION_14
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
+project.ext {
+    moduleName = "ma.vi.base"
+}
+
+jar {
+    // println("Module name is: " + project.moduleName)
+    archiveBaseName = project.moduleName
+    inputs.property("moduleName", project.moduleName)
+    manifest {
+        attributes('Automatic-Module-Name': project.moduleName)
+    }
+}
+
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            from components.java
+//
+//            artifact sourceJar {
+//                classifier "sources"
+//            }
+//        }
+//    }
+//}
+
+dependencies {
+    compile "org.apache.commons:commons-lang3:latest.release"
+    compile "com.google.guava:guava:latest.release"
+
+    compile "com.fasterxml.jackson.core:jackson-core:latest.release"
+    compile "com.fasterxml.woodstox:woodstox-core:latest.release"
+
+    testImplementation "junit:junit:4.11"
+}

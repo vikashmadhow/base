@@ -1,0 +1,172 @@
+/*
+ * Copyright (c) 2018 Vikash Madhow
+ */
+
+package ma.vi.base.util;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+/**
+ * Utility functions on numbers.
+ *
+ * @author vikash.madhow@gmail.com
+ */
+public class Numbers {
+  /**
+   * Return the shortest number object which can hold the passed value.
+   */
+  public static Number shortestIntegralType(long value) {
+    return value >= -128 && value <= 127 ? (byte) value :
+           value >= -32768 && value <= 32767 ? (short) value :
+           value >= -2147483648 && value <= 2147483647 ? (int) value : value;
+  }
+
+  /**
+   * Return true if the specified number is an integer.
+   */
+  public static boolean isIntegral(Number number) {
+    return number instanceof Byte || number instanceof Short ||
+        number instanceof Integer || number instanceof Long ||
+        number instanceof BigInteger;
+  }
+
+  /**
+   * Return true if the specified type is an integer.
+   */
+  public static boolean isIntegral(Class numberType) {
+    return Byte.class.isAssignableFrom(numberType) ||
+        Short.class.isAssignableFrom(numberType) ||
+        Integer.class.isAssignableFrom(numberType) ||
+        Long.class.isAssignableFrom(numberType) ||
+        BigInteger.class.isAssignableFrom(numberType);
+  }
+
+  /**
+   * Return true if the specified number is a areal.
+   */
+  public static boolean isReal(Number number) {
+    return number instanceof Float ||
+        number instanceof Double ||
+        number instanceof BigDecimal;
+  }
+
+  /**
+   * Return true if the specified type is a real number.
+   */
+  public static boolean isReal(Class numberType) {
+    return Float.class.isAssignableFrom(numberType) ||
+        Double.class.isAssignableFrom(numberType) ||
+        BigDecimal.class.isAssignableFrom(numberType);
+  }
+
+  /**
+   * Promote the number to long.
+   */
+  public static Long promoteToLong(Number value) {
+    return value == null ? null :
+           value instanceof Long ? (Long) value :
+           value.longValue();
+  }
+
+  /**
+   * Promote the number to double.
+   */
+  public static Double promoteToDouble(Number value) {
+    return value == null ? null :
+           value instanceof Double ? (Double) value :
+           value.doubleValue();
+  }
+
+  /**
+   * Converts a string representation to the longest possible number
+   * throwing NumberFormatException if not possible. Returns null if
+   * the string is null or empty.
+   */
+  public static Number convert(String number) throws NumberFormatException {
+    if (number == null) {
+      return null;
+    } else {
+      number = number.trim();
+      if (number.length() == 0) {
+        return null;
+      } else {
+        number = number.replaceAll(",", "");
+        if (number.contains(".") || number.contains("E") || number.contains("e")) {
+          try {
+            return Double.valueOf(number);
+          } catch (NumberFormatException e1) {
+            try {
+              return Float.valueOf(number);
+            } catch (NumberFormatException e2) {
+            }
+          }
+        }
+        try {
+          return Long.valueOf(number);
+        } catch (NumberFormatException e3) {
+          try {
+            return Integer.valueOf(number);
+          } catch (NumberFormatException e4) {
+            try {
+              return Short.valueOf(number);
+            } catch (NumberFormatException e5) {
+              return Byte.valueOf(number);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Converts a number to the specified target number type.
+   */
+  public static Number convert(Number number, Class<?> toNumberType) {
+    if (number == null || toNumberType == null) {
+      return number;
+    }
+    if (toNumberType.isPrimitive()) {
+      toNumberType = Classes.getWrapperType(toNumberType);
+    }
+
+    // Round instead of truncating
+    if (isReal(number) && isIntegral(toNumberType)) {
+      number = Math.round(number instanceof Double ? number.doubleValue() : number.floatValue());
+    }
+
+    if (Byte.class.equals(toNumberType)) {
+      return number.byteValue();
+    } else if (Short.class.equals(toNumberType)) {
+      return number.shortValue();
+    } else if (Integer.class.equals(toNumberType)) {
+      return number.intValue();
+    } else if (Long.class.equals(toNumberType)) {
+      return number.longValue();
+    } else if (Float.class.equals(toNumberType)) {
+      return number.floatValue();
+    } else if (Double.class.equals(toNumberType)) {
+      return number.doubleValue();
+    }
+
+    throw new IllegalArgumentException("Could not convert " + number
+        + " of type " + number.getClass()
+        + " to " + toNumberType);
+  }
+
+  /**
+   * Number equality, ignoring actual number type.
+   */
+  public static boolean equals(Number number1, Number number2) {
+    if (number1 == null || number2 == null) {
+      return number1 == number2;
+    } else {
+      return isIntegral(number1)
+             ? promoteToLong(number1).equals(promoteToLong(number2))
+             : promoteToDouble(number1).equals(promoteToDouble(number2));
+    }
+  }
+
+  private Numbers() {
+  }
+}
