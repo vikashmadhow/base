@@ -1,19 +1,41 @@
 buildscript {
-    repositories {
-        jcenter()
-        mavenCentral()
-    }
+  repositories {
+    jcenter()
+    mavenCentral()
+  }
 }
 
 plugins {
-    id 'java-library'
-    id 'maven-publish'
-    id 'idea'
+  id("maven-publish")
+  id("java-library")
+  id("idea")
 }
 
-apply plugin: 'java-library'
-apply plugin: 'maven-publish'
-apply plugin: 'idea'
+
+
+project.ext {
+  moduleName = "ma.vi.base"
+}
+
+publishing {
+  repositories {
+    maven {
+      name = "GitHubPackages"
+      url = uri("https://maven.pkg.github.com/vikashmadhow/base")
+      credentials {
+        username = "vikash.madhow@gmail.com"
+        password = "a869e80356e73c2fdd5908a6084119b3e1ac1193"
+//        username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+//        password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+      }
+    }
+  }
+  publications {
+    gpr(MavenPublication) {
+      from(components.java)
+    }
+  }
+}
 
 group 'ma.vi.base'
 version '0.1.0'
@@ -21,54 +43,50 @@ version '0.1.0'
 sourceCompatibility = JavaVersion.VERSION_14
 
 repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
+  mavenLocal()
+  mavenCentral()
+  jcenter()
 }
 
 sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java']
-        }
-        resources {
-            srcDirs = ['src/main/resources']
-        }
+  main {
+    java {
+      srcDirs = ['src/main/java']
     }
-    test {
-        java {
-            srcDirs = ['src/test/java']
-        }
-        resources {
-            srcDirs = ['src/test/resources']
-        }
+    resources {
+      srcDirs = ['src/main/resources']
     }
-}
-
-project.ext {
-    moduleName = "ma.vi.base"
+  }
+  test {
+    java {
+      srcDirs = ['src/test/java']
+    }
+    resources {
+      srcDirs = ['src/test/resources']
+    }
+  }
 }
 
 jar {
-    // println("Module name is: " + project.moduleName)
-    archiveBaseName = project.moduleName
-    inputs.property("moduleName", project.moduleName)
-    manifest {
-        attributes('Automatic-Module-Name': project.moduleName)
-    }
+  // println("Module name is: " + project.moduleName)
+  archiveBaseName = project.moduleName
+  inputs.property("moduleName", project.moduleName)
+  manifest {
+    attributes('Automatic-Module-Name': project.moduleName)
+  }
 }
 
 dependencies {
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    compile "org.apache.commons:commons-lang3:latest.release"
-    compile "com.google.guava:guava:latest.release"
+  // This dependency is exported to consumers, that is to say found on their compile classpath.
+  compile "org.apache.commons:commons-lang3:latest.release"
+  compile "com.google.guava:guava:latest.release"
 
-    compile "com.fasterxml.jackson.core:jackson-core:latest.release"
-    compile "com.fasterxml.woodstox:woodstox-core:latest.release"
+  compile "com.fasterxml.jackson.core:jackson-core:latest.release"
+  compile "com.fasterxml.woodstox:woodstox-core:latest.release"
 
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
+  // This dependency is used internally, and not exposed to consumers on their own compile classpath.
 //    implementation 'com.google.guava:guava:28.2-jre'
 
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+  // Use JUnit test framework
+  testImplementation 'junit:junit:4.12'
 }
