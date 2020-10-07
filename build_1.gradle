@@ -9,93 +9,29 @@ buildscript {
 }
 
 plugins {
-  id "maven"
-  id "signing"
-
-
-
-//  id "maven-publish"
-//  id "java-library"
-//  id "idea"
+  id("maven-publish")
+  id("java-library")
+  id("idea")
 //  id 'io.codearte.nexus-staging' version '0.22.0'
-//  id "com.bmuschko.nexus"
-
   id "de.marcphilipp.nexus-publish" version "0.3.0"
 }
+
+//nexusStaging {
+//  packageGroup = "com.vikmad" //optional if packageGroup == project.getGroup()
+//   stagingProfileId = "7facb64cdf020" //when not defined will be got from server using "packageGroup"
+//}
+
+apply plugin: 'com.bmuschko.nexus'
+
+archivesBaseName = 'base'
+group = "com.vikmad"
+version = "0.1.0"
 
 project.ext {
   moduleName = "com.vikmad.base"
 }
 
-task javadocJar(type: Jar) {
-  archiveClassifier = 'javadoc'
-  from javadoc
-}
-
-task sourcesJar(type: Jar) {
-  archiveClassifier = 'sources'
-  from sourceSets.main.allSource
-}
-
-artifacts {
-  archives javadocJar, sourcesJar
-}
-
-signing {
-  sign configurations.archives
-}
-
-group = "com.vikmad"
-archiveBaseName = "base"
-version = "0.1.2"
-
-
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      pom.project {
-        name 'Example Application'
-        packaging 'jar'
-        // optionally artifactId can be defined here
-        description 'A application used as an example on how to set up pushing  its components to the Central Repository.'
-        url 'http://www.example.com/example-application'
-
-        scm {
-          connection 'scm:svn:http://foo.googlecode.com/svn/trunk/'
-          developerConnection 'scm:svn:https://foo.googlecode.com/svn/trunk/'
-          url 'http://foo.googlecode.com/svn/trunk/'
-        }
-
-        licenses {
-          license {
-            name 'The Apache License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-          }
-        }
-
-        developers {
-          developer {
-            id 'manfred'
-            name 'Manfred Moser'
-            email 'manfred@sonatype.com'
-          }
-        }
-      }
-    }
-  }
-}
-
-uploadArchives {
+modifyPom {
   project {
     name 'base'
     description 'Base algos, data structures and utilities'
