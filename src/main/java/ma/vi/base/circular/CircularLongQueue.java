@@ -78,8 +78,6 @@ public class CircularLongQueue {
    * next item to read in the queue. If this method is called
    * before any items have been read, null will be returned when
    * the top of the queue is read next.
-   *
-   * @throws ma.vi.util.NoMoreSpaceException If the queue is full.
    */
   public void unread() {
     decStart();
@@ -90,7 +88,6 @@ public class CircularLongQueue {
    * be the next item read.
    *
    * @param item The item to push back.
-   * @throws ma.vi.util.NoMoreSpaceException If the buffer is full.
    */
   public void push(long item) {
     unread();

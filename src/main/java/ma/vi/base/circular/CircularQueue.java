@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
  * pointer reaches the end of the buffer, it wraps around to the start.
  * <p>
  * This buffer also supports push-back of items through the
- * {@link #unread()} and {@link #push(T)} methods.
+ * {@link #unread()} and {@link #push(Object)} methods.
  *
  * @param <T> The type of the items in the buffer
  * @author vikash.madhow@gmail.com
