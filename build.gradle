@@ -95,32 +95,47 @@ uploadArchives {
   }
 }
 
+
 uploadArchives {
-  project {
-    name 'base'
-    description 'Base algos, data structures and utilities'
-    url 'https://github.com/vikashmadhow/base'
-    inceptionYear '2016'
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-    scm {
-      url 'https://github.com/vikashmadhow/base'
-      connection 'scm:https://github.com/vikashmadhow/base.git'
-      developerConnection 'scm:git://github.com/vikashmadhow/base.git'
-    }
-
-    licenses {
-      license {
-        name 'The Apache Software License, Version 2.0'
-        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-        distribution 'repo'
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
       }
-    }
 
-    developers {
-      developer {
-        id 'vikashmadhow'
-        name 'Vikash Madhow'
-        email 'vikash.madhow@gmail.com'
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name 'base'
+        packaging 'jar'
+        // optionally artifactId can be defined here
+        description 'Base algos, data structures and utilities'
+        url 'https://github.com/vikashmadhow/base'
+
+        scm {
+          url 'https://github.com/vikashmadhow/base'
+          connection 'scm:https://github.com/vikashmadhow/base.git'
+          developerConnection 'scm:git://github.com/vikashmadhow/base.git'
+        }
+
+        licenses {
+          license {
+            name 'The Apache License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+
+        developers {
+          developer {
+            id 'vikashmadhow'
+            name 'Vikash Madhow'
+            email 'vikash.madhow@gmail.com'
+          }
+        }
       }
     }
   }
