@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2016 Vikash Madhow
+ */
+
+/**
+ * Base algos, data structures and utility functions.
+ *
+ * @author Vikash Madhow (vikash.madhow@gmail.com)
+ */
+
 buildscript {
   repositories {
     jcenter()
@@ -50,8 +60,6 @@ dependencies {
 }
 
 sourceCompatibility = JavaVersion.VERSION_14
-group = "com.vikmad"
-archivesBaseName = "base"
 version = "0.1.2"
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
@@ -78,7 +86,7 @@ publishing {
       from components.java
       pom {
         groupId = 'com.vikmad'
-        name = 'base'
+        artifactId = 'base'
         description = 'Base algos, data structures and utilities'
         url = 'https://github.com/vikashmadhow/base'
         licenses {
