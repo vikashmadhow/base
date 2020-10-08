@@ -3,157 +3,14 @@ buildscript {
     jcenter()
     mavenCentral()
   }
-  dependencies {
-    classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
-  }
 }
 
 plugins {
-  id "maven"
+  id "java-library"
+  id "maven-publish"
   id "signing"
-
-
-
-//  id "maven-publish"
-//  id "java-library"
-//  id "idea"
-//  id 'io.codearte.nexus-staging' version '0.22.0'
-//  id "com.bmuschko.nexus"
-
   id "de.marcphilipp.nexus-publish" version "0.3.0"
 }
-
-project.ext {
-  moduleName = "com.vikmad.base"
-}
-
-task javadocJar(type: Jar) {
-  archiveClassifier = 'javadoc'
-  from javadoc
-}
-
-task sourcesJar(type: Jar) {
-  archiveClassifier = 'sources'
-  from sourceSets.main.allSource
-}
-
-artifacts {
-  archives javadocJar, sourcesJar
-}
-
-signing {
-  sign configurations.archives
-}
-
-group = "com.vikmad"
-archiveBaseName = "base"
-version = "0.1.2"
-
-
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      pom.project {
-        name 'Example Application'
-        packaging 'jar'
-        // optionally artifactId can be defined here
-        description 'A application used as an example on how to set up pushing  its components to the Central Repository.'
-        url 'http://www.example.com/example-application'
-
-        scm {
-          connection 'scm:svn:http://foo.googlecode.com/svn/trunk/'
-          developerConnection 'scm:svn:https://foo.googlecode.com/svn/trunk/'
-          url 'http://foo.googlecode.com/svn/trunk/'
-        }
-
-        licenses {
-          license {
-            name 'The Apache License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-          }
-        }
-
-        developers {
-          developer {
-            id 'manfred'
-            name 'Manfred Moser'
-            email 'manfred@sonatype.com'
-          }
-        }
-      }
-    }
-  }
-}
-
-
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      pom.project {
-        name 'base'
-        packaging 'jar'
-        // optionally artifactId can be defined here
-        description 'Base algos, data structures and utilities'
-        url 'https://github.com/vikashmadhow/base'
-
-        scm {
-          url 'https://github.com/vikashmadhow/base'
-          connection 'scm:https://github.com/vikashmadhow/base.git'
-          developerConnection 'scm:git://github.com/vikashmadhow/base.git'
-        }
-
-        licenses {
-          license {
-            name 'The Apache License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-          }
-        }
-
-        developers {
-          developer {
-            id 'vikashmadhow'
-            name 'Vikash Madhow'
-            email 'vikash.madhow@gmail.com'
-          }
-        }
-      }
-    }
-  }
-}
-
-extraArchive {
-  sources = true
-  tests = true
-  javadoc = true
-}
-
-nexus {
-  sign = true
-  snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
-  repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-}
-
-sourceCompatibility = JavaVersion.VERSION_14
 
 repositories {
   mavenLocal()
@@ -180,35 +37,6 @@ sourceSets {
   }
 }
 
-nexusPublishing {
-  repositories {
-    sonatype()
-  }
-}
-
-//java {
-//  withJavadocJar()
-//  withSourcesJar()
-//}
-
-publishing {
-  publications {
-    mavenJava(MavenPublication) {
-      artifactId = 'base'
-      from(components.java)
-    }
-  }
-}
-
-//jar {
-//  // println("Module name is: " + project.moduleName)
-//  archivesBaseName = project.moduleName
-//  inputs.property("moduleName", project.moduleName)
-//  manifest {
-//    attributes('Automatic-Module-Name': project.moduleName)
-//  }
-//}
-
 dependencies {
   // This dependency is exported to consumers, that is to say found on their compile classpath.
   compile "org.apache.commons:commons-lang3:latest.release"
@@ -217,9 +45,68 @@ dependencies {
   compile "com.fasterxml.jackson.core:jackson-core:latest.release"
   compile "com.fasterxml.woodstox:woodstox-core:latest.release"
 
-  // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-//    implementation 'com.google.guava:guava:28.2-jre'
-
   // Use JUnit test framework
   testImplementation 'junit:junit:4.12'
+}
+
+sourceCompatibility = JavaVersion.VERSION_14
+group = "com.vikmad"
+archivesBaseName = "base"
+version = "0.1.2"
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+java {
+  withJavadocJar()
+  withSourcesJar()
+}
+
+publishing {
+  repositories {
+    maven {
+      def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
+      url = isReleaseVersion ? releaseRepo : snapshotRepo
+      credentials {
+        username = project.hasProperty('ossrhUsername') ? ossrhUsername : "Unknown user"
+        password = project.hasProperty('ossrhPassword') ? ossrhPassword : "Unknown password"
+      }
+    }
+  }
+
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+      pom {
+        groupId = 'com.vikmad'
+        name = 'base'
+        description = 'Base algos, data structures and utilities'
+        url = 'https://github.com/vikashmadhow/base'
+        licenses {
+          license {
+            name = 'The Apache License, Version 2.0'
+            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+        scm {
+          url = 'https://github.com/vikashmadhow/base'
+          connection = 'scm:https://github.com/vikashmadhow/base.git'
+          developerConnection = 'scm:git://github.com/vikashmadhow/base.git'
+        }
+      }
+    }
+  }
+}
+
+signing {
+  sign publishing.publications.mavenJava
+}
+
+tasks.withType(Sign) {
+  onlyIf { isReleaseVersion }
+}
+
+nexusPublishing {
+  repositories {
+    sonatype()
+  }
 }
