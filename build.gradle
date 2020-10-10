@@ -19,7 +19,7 @@ plugins {
   id "java-library"
   id "maven-publish"
   id "signing"
-  id "de.marcphilipp.nexus-publish" version "0.3.0"
+  id 'io.codearte.nexus-staging' version '0.22.0'
 }
 
 repositories {
@@ -59,6 +59,8 @@ dependencies {
   testImplementation 'junit:junit:4.12'
 }
 
+group = 'com.vikmad'
+archivesBaseName = 'base'
 sourceCompatibility = JavaVersion.VERSION_14
 version = "0.1.2"
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
@@ -87,12 +89,21 @@ publishing {
       pom {
         groupId = 'com.vikmad'
         artifactId = 'base'
+        name = "Base algos and utils"
         description = 'Base algos, data structures and utilities'
         url = 'https://github.com/vikashmadhow/base'
         licenses {
           license {
             name = 'The Apache License, Version 2.0'
             url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+        developers {
+          developer {
+            id = "vikashmadhow"
+            name = "Vikash Madhow"
+            email = "vikash.madhow@gmail.com"
+            url = "http://vikmad.com"
           }
         }
         scm {
@@ -113,8 +124,8 @@ tasks.withType(Sign) {
   onlyIf { isReleaseVersion }
 }
 
-nexusPublishing {
-  repositories {
-    sonatype()
-  }
+nexusStaging {
+  packageGroup = group
+  username = project.getProperty('ossrhUsername')
+  password = project.getProperty('ossrhPassword')
 }
