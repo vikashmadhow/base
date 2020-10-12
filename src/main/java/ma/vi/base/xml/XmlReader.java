@@ -16,8 +16,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static com.google.common.base.CharMatcher.whitespace;
-import static com.google.common.base.Preconditions.*;
+import static ma.vi.base.lang.Errors.checkArgument;
 import static java.util.Collections.emptyMap;
 import static javax.xml.stream.XMLStreamConstants.*;
 import static ma.vi.base.lang.Errors.unchecked;
@@ -37,7 +36,7 @@ public class XmlReader implements Iterable<Fragment>, Iterator<Fragment>, AutoCl
   }
 
   public XmlReader(Reader in, int backtracking) {
-    checkNotNull(in, "Reader cannot be null");
+    checkArgument(in != null, "Reader cannot be null");
     checkArgument(backtracking >= 2, "Backtracking length must be 2 or more");
     try {
       xml = (XMLStreamReader2) XMLInputFactory2.newInstance().createXMLStreamReader(in);
@@ -95,7 +94,7 @@ public class XmlReader implements Iterable<Fragment>, Iterator<Fragment>, AutoCl
   public void rewind(int positions) {
     checkArgument(positions > 0 && positions <= buffer.length,
         "Number of positions to rewind must be greater than 0 and <= " + buffer.length);
-    checkState(readPos - positions >= 0, "Reader cannot be rewound by " + positions +
+    checkArgument(readPos - positions >= 0, "Reader cannot be rewound by " + positions +
         " elements as that many elements have not been read yet");
     readPos -= positions;
   }
@@ -115,7 +114,7 @@ public class XmlReader implements Iterable<Fragment>, Iterator<Fragment>, AutoCl
   public Fragment previous(int positions) {
     checkArgument(positions > 0 && positions <= buffer.length,
         "Number of positions to look back at must be greater than 0 and <= " + buffer.length);
-    checkState(readPos - positions >= 0, "Cannot look back " + positions + " positions as " +
+    checkArgument(readPos - positions >= 0, "Cannot look back " + positions + " positions as " +
         "that many elements have not been read yet");
     return buffer[(readPos - positions) % buffer.length];
   }
@@ -196,7 +195,8 @@ public class XmlReader implements Iterable<Fragment>, Iterator<Fragment>, AutoCl
             && (before == null
             || before.type != T_START_ELEMENT
             || lookAhead.type != T_END_ELEMENT)
-            && whitespace().matchesAllOf(de.text)) {
+//            && whitespace().matchesAllOf(de.text)) {
+            && de.text.trim().length() == 0) {
           return _next();
 
         } else {

@@ -4,16 +4,19 @@
 
 package ma.vi.base.xml;
 
-import com.google.common.collect.Lists;
 import ma.vi.base.collections.Maps;
 import ma.vi.base.tuple.T2;
 import org.junit.Test;
 
 import java.io.StringReader;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 import static java.util.Collections.emptyMap;
+import static java.util.Spliterator.ORDERED;
+import static java.util.Spliterators.spliteratorUnknownSize;
+import static java.util.stream.Collectors.toList;
 import static ma.vi.base.xml.Fragment.Type.*;
 import static org.junit.Assert.*;
 
@@ -77,8 +80,9 @@ public class XmlReaderTest {
 
   @Test
   public void textXml1() {
-    List<Fragment> elements = Lists.newArrayList((Iterator<Fragment>)new XmlReader(new StringReader(xml1)));
-    assertEquals(elements, Lists.newArrayList(
+    List<Fragment> elements = StreamSupport.stream(spliteratorUnknownSize(new XmlReader(new StringReader(xml1)), ORDERED), false)
+                                           .collect(toList());
+    assertEquals(elements, Arrays.asList(
         new Fragment(T_START_ELEMENT, "a", Maps.of(T2.of("a", "b"), T2.of("c", "d"))),
         new Fragment(T_TEXT, "test", emptyMap()),
         new Fragment(T_END_ELEMENT, "a", emptyMap()),
@@ -156,9 +160,9 @@ public class XmlReaderTest {
         "  </b>\n" +
         "</a>";
        */
-
-    List<Fragment> elements = Lists.newArrayList((Iterator<Fragment>)new XmlReader(new StringReader(xml2)));
-    assertEquals(elements, Lists.newArrayList(
+    List<Fragment> elements = StreamSupport.stream(spliteratorUnknownSize(new XmlReader(new StringReader(xml2)), ORDERED), false)
+                                           .collect(toList());
+    assertEquals(elements, Arrays.asList(
         new Fragment(T_START_ELEMENT, "a", Maps.of(T2.of("a", "b"), T2.of("c", "d"))),
         new Fragment(T_TEXT, "\ntest\n  suffix\n  ", emptyMap()),
         new Fragment(T_START_ELEMENT, "b", emptyMap()),
@@ -191,12 +195,13 @@ public class XmlReaderTest {
         "</a>";
        */
 
-    List<Fragment> elements = Lists.newArrayList((Iterator<Fragment>)
-                                                     XmlReaderBuilder.newBuilder(new StringReader(xml2))
-                                                                     .coalesceText(false)
-                                                                     .discardComments(false)
-                                                                     .build());
-    assertEquals(elements, Lists.newArrayList(
+    List<Fragment> elements = StreamSupport.stream(spliteratorUnknownSize(
+                                  XmlReaderBuilder.newBuilder(new StringReader(xml2))
+                                                  .coalesceText(false)
+                                                  .discardComments(false)
+                                                  .build(), ORDERED), false)
+                                           .collect(toList());
+    assertEquals(elements, Arrays.asList(
         new Fragment(T_START_ELEMENT, "a", Maps.of(T2.of("a", "b"), T2.of("c", "d"))),
         new Fragment(T_TEXT, "\ntest\n ", emptyMap()),
         new Fragment(T_COMMENT, " A comment ", emptyMap()),

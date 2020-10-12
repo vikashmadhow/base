@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static ma.vi.base.lang.Errors.checkArgument;
 
 /**
  * <p>

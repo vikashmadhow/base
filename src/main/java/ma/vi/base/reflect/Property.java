@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-import static com.google.common.base.Preconditions.*;
+import static ma.vi.base.lang.Errors.checkArgument;
 import static ma.vi.base.lang.Errors.unchecked;
 import static ma.vi.base.string.Strings.uncapFirst;
 
@@ -17,7 +17,7 @@ import static ma.vi.base.string.Strings.uncapFirst;
  */
 public class Property {
   Property(Field field) {
-    checkNotNull(field, "Field must not be null");
+    checkArgument(field != null, "Field must not be null");
     this.field = field;
     this.getter = this.setter = null;
   }
@@ -45,12 +45,12 @@ public class Property {
   }
 
   public Object get(Object object) {
-    checkState(field != null || getter != null, "This property cannot be read from");
+    checkArgument(field != null || getter != null, "This property cannot be read from");
     return unchecked(() -> field != null ? field.get(object) : getter.invoke(object));
   }
 
   public void set(Object object, Object value) {
-    checkState(field != null || setter != null, "This property cannot be written to");
+    checkArgument(field != null || setter != null, "This property cannot be written to");
     if (field != null) {
       unchecked(() -> field.set(object, value));
     } else {

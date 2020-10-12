@@ -4,18 +4,12 @@
 
 package ma.vi.base.lang;
 
-import com.google.common.base.CharMatcher;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.CharMatcher.is;
-import static com.google.common.base.CharMatcher.javaLetterOrDigit;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
 import static java.lang.Integer.max;
 import static java.lang.System.Logger.Level.WARNING;
@@ -63,19 +57,6 @@ public class Names {
         uniqueName.delete(len, uniqueName.length()).append(random.nextInt(max(range, 1000)));
       } while (takenNames.contains(uniqueName.toString()));
       return uniqueName.toString();
-    }
-  }
-
-  public static String toIdentifier(String name) {
-    checkNotNull(name, "Name to make identifier from must not be null");
-    String id = dotOrDollar.replaceFrom(name, '_');
-    id = notLetterDigitUnderscore.removeFrom(id);
-    if (id.length() == 0) {
-      return "_";
-    } else if (isDigit(id.charAt(0))) {
-      return "_" + id;
-    } else {
-      return id;
     }
   }
 
@@ -205,12 +186,12 @@ public class Names {
    */
   private static final Pattern invalidXmlElementNameChar = Pattern.compile("[^\\p{L}\\d\\-_.]");
 
-  /**
-   * Matches [a-zA-Z0-9_]
-   */
-  private static final CharMatcher dotOrDollar = CharMatcher.anyOf(".$");
-  private static final CharMatcher letterDigitUnderscore = javaLetterOrDigit().or(is('_'));
-  private static final CharMatcher notLetterDigitUnderscore = letterDigitUnderscore.negate();
+//  /**
+//   * Matches [a-zA-Z0-9_]
+//   */
+//  private static final CharMatcher dotOrDollar = CharMatcher.anyOf(".$");
+//  private static final CharMatcher letterDigitUnderscore = javaLetterOrDigit().or(is('_'));
+//  private static final CharMatcher notLetterDigitUnderscore = letterDigitUnderscore.negate();
 
   /**
    * logger for this class

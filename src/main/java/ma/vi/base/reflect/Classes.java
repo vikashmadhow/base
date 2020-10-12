@@ -4,9 +4,6 @@
 
 package ma.vi.base.reflect;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import ma.vi.base.collections.Maps;
 import ma.vi.base.lang.NotFoundException;
 import ma.vi.base.tuple.T2;
@@ -16,6 +13,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static ma.vi.base.lang.Errors.unchecked;
 import static org.apache.commons.lang3.StringUtils.countMatches;
@@ -37,7 +36,7 @@ public class Classes {
       return subclassCache.get(pair);
     } else {
       boolean subclass = false;
-      for (Class<?> component : Dissector.componentClasses(cls)) {
+      for (Class<?> component: Dissector.componentClasses(cls)) {
         if (component.getName().equals(superType)) {
           subclass = true;
           break;
@@ -59,7 +58,7 @@ public class Classes {
    */
   public static Object instanceOf(Class<?> cls, Object... parameters) {
     List<T2<Object, Class<?>>> paramsWithType = new ArrayList<>();
-    for (Object parameter : parameters) {
+    for (Object parameter: parameters) {
       paramsWithType.add(T2.of(parameter, parameter == null ? Object.class : parameter.getClass()));
     }
     return instanceOfWithTypes(cls, paramsWithType.toArray(new T2[0]));
@@ -75,10 +74,10 @@ public class Classes {
       cls = wrapperClassOf(cls);
     }
     if (Character.class.equals(cls) && parameters.length > 0 &&
-        parameters[0].a instanceof String && ((String) parameters[0].a).length() > 0) {
+        parameters[0].a instanceof String && ((String)parameters[0].a).length() > 0) {
       // For creation of characters, use only first character of string if
       // a string is provided as the construction parameter.
-      parameters[0] = T2.of(((String) parameters[0].a).charAt(0), Character.class);
+      parameters[0] = T2.of(((String)parameters[0].a).charAt(0), Character.class);
     }
 
     // get parameter types
@@ -100,7 +99,7 @@ public class Classes {
           return ctor.newInstance(params);
         } else {
           throw new IllegalArgumentException(cls + " does not have a constructor taking the following " +
-              "parameters " + Arrays.toString(types) + "  or constructor is abstract.");
+                                                 "parameters " + Arrays.toString(types) + "  or constructor is abstract.");
         }
       }
     } catch (Exception e) {
@@ -113,7 +112,7 @@ public class Classes {
    */
   public static <T> T instanceOfOrNull(Class<T> cls, Object... params) {
     try {
-      return (T) instanceOf(cls, params);
+      return (T)instanceOf(cls, params);
     } catch (Exception e) {
       return null;
     }
@@ -124,7 +123,7 @@ public class Classes {
    * to the proper type.
    */
   public static <T> Class<T> classOf(T value) {
-    return (Class<T>) value.getClass();
+    return (Class<T>)value.getClass();
   }
 
   /**
@@ -140,7 +139,43 @@ public class Classes {
    * If it still could not be found, throws {@link NotFoundException}.
    */
   public static Class<?> classOf(String type, String defaultPackage) {
-    return loadedClasses.getUnchecked(T2.of(type, defaultPackage));
+    return loadedClasses.computeIfAbsent(T2.of(type, defaultPackage), fullType -> {
+      switch (type) {
+        case "int":       return int.class;
+        case "short":     return short.class;
+        case "long":      return long.class;
+        case "byte":      return byte.class;
+        case "char":      return char.class;
+        case "float":     return float.class;
+        case "double":    return double.class;
+        case "boolean":   return boolean.class;
+        case "void":      return void.class;
+        default:
+          int pos = type.indexOf('[');
+          if (pos != -1) {
+            // For array types, create the array with the right component
+            // type and number of dimensions and return its class.
+            int dimensions = countMatches(type, '[');
+            Class<?> componentType = classOf(type.substring(0, pos));
+            return Array.newInstance(componentType, new int[dimensions]).getClass();
+
+          } else try {
+            return Class.forName(type);
+
+          } catch (ClassNotFoundException e) {
+            if (defaultPackage != null) try {
+              return Class.forName(defaultPackage + "." + type);
+
+            } catch (ClassNotFoundException ne) {
+              throw new NotFoundException("Could not load class named " + type + " or " +
+                                              defaultPackage + "." + type, ne);
+            }
+            else {
+              throw new NotFoundException("Could not load " + type, e);
+            }
+          }
+      }
+    });
   }
 
   /**
@@ -227,58 +262,7 @@ public class Classes {
   /**
    * Classes loaded through {@link #classOf(String, String)}.
    */
-  private final static LoadingCache<T2<String, String>, Class<?>> loadedClasses =
-      CacheBuilder.newBuilder().build(new CacheLoader<T2<String, String>, Class<?>>() {
-        @Override
-        public Class<?> load(T2<String, String> fullType) throws Exception {
-          String type = fullType.a;
-          switch (type) {
-            case "int":
-              return int.class;
-            case "short":
-              return short.class;
-            case "long":
-              return long.class;
-            case "byte":
-              return byte.class;
-            case "char":
-              return char.class;
-            case "float":
-              return float.class;
-            case "double":
-              return double.class;
-            case "boolean":
-              return boolean.class;
-            case "void":
-              return void.class;
-            default:
-              int pos = type.indexOf('[');
-              if (pos != -1) {
-                // For array types, create the array with the right component
-                // type and number of dimensions and return its class.
-                int dimensions = countMatches(type, '[');
-                Class<?> componentType = classOf(type.substring(0, pos));
-                return Array.newInstance(componentType, new int[dimensions]).getClass();
-
-              } else try {
-                return Class.forName(type);
-
-              } catch (ClassNotFoundException e) {
-                String defaultPackage = fullType.b;
-                if (defaultPackage != null) try {
-                  return Class.forName(defaultPackage + "." + type);
-
-                } catch (ClassNotFoundException ne) {
-                  throw new NotFoundException("Could not load class named " + type + " or " +
-                      defaultPackage + "." + type, ne);
-                }
-                else {
-                  throw new NotFoundException("Could not load " + type, e);
-                }
-              }
-          }
-        }
-      });
+  private final static ConcurrentMap<T2<String, String>, Class<?>> loadedClasses = new ConcurrentHashMap<>();
 
   /**
    * Cache for subclass relationships.

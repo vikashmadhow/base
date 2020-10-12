@@ -4,13 +4,14 @@
 
 package ma.vi.base.collections;
 
+import ma.vi.base.lang.Errors;
 import ma.vi.base.tuple.T2;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkState;
+import static ma.vi.base.lang.Errors.checkArgument;
 
 /**
  * Utilities to work with Maps.
@@ -117,8 +118,9 @@ public class Maps {
     for (Map.Entry<A, B> entry : map.entrySet()) {
       A key = entry.getKey();
       B value = entry.getValue();
-      checkState(!inv.containsKey(value), "Map is not invertible as value %s is mapped to " +
-          "both %s and %s", value, key, inv.get(value));
+      checkArgument(!inv.containsKey(value),
+                    "Map is not invertible as value " + value + " is mapped to " +
+                    "both " + key + " and " + inv.get(value));
       inv.put(value, key);
     }
     return inv;

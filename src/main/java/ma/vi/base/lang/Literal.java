@@ -15,7 +15,7 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static ma.vi.base.lang.Errors.checkArgument;
 import static ma.vi.base.lang.Errors.unchecked;
 import static ma.vi.base.reflect.Classes.componentType;
 
@@ -382,14 +382,14 @@ public interface Literal<T> {
    */
   class Register {
     public <T> void add(Class<T> cls, Literal<T> literal) {
-      checkArgument(!isBaseLiteral(cls), cls + " is a basic literal class whose literalization " +
+      checkArgument(!isBaseLiteral(cls), cls + " is a base literal class whose literalization " +
           "is already defined and cannot be replaced as it could break the relationships " +
           "between the existing classes in the system");
       register.put(cls, literal);
     }
 
     public void remove(Class<?> cls) {
-      checkArgument(!isBaseLiteral(cls), cls + " is a basic literal class whose literalization " +
+      checkArgument(!isBaseLiteral(cls), cls + " is a base literal class whose literalization " +
           "is already defined and cannot be removed as it could break the relationships " +
           "between the existing classes in the system");
       register.remove(cls);

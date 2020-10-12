@@ -4,22 +4,20 @@
 
 package ma.vi.base.reflect;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.reflect.Modifier.isProtected;
 import static java.lang.reflect.Modifier.isPublic;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static ma.vi.base.lang.Errors.checkArgument;
 import static ma.vi.base.string.Strings.capFirst;
 
 /**
@@ -34,8 +32,18 @@ public class Dissector {
    * declared in the class.
    */
   public static Set<Constructor<?>> constructors(Class<?> cls) {
-    checkNotNull(cls, "Class must not be null");
-    return ctorsCache.getUnchecked(cls);
+    checkArgument(cls != null, "Class must not be null");
+    return ctorsCache.computeIfAbsent(cls, k -> {
+      // add all public constructors
+      Set<Constructor<?>> ctors = new HashSet<>();
+      Collections.addAll(ctors, cls.getConstructors());
+
+      // add non-public declared constructors
+      Stream.of(cls.getDeclaredConstructors())
+            .filter(c -> !isPublic(c.getModifiers()))
+            .forEach(ctors::add);
+      return ctors;
+    });
   }
 
   /**
@@ -58,8 +66,25 @@ public class Dissector {
    * rules of method overriding.
    */
   public static Map<MethodDescriptor, Method> methods(Class<?> cls) {
-    checkNotNull(cls, "Class must not be null");
-    return methodsCache.getUnchecked(cls);
+    checkArgument(cls != null, "Class must not be null");
+    return methodsCache.computeIfAbsent(cls, k -> {
+      // add all public methods
+      Map<MethodDescriptor, Method> methods = new HashMap<>();
+      Arrays.stream(cls.getMethods()).forEach(m -> methods.put(methodDescriptor(m), m));
+
+      // add non-public declared methods
+      for (Class<?> cur = cls; cur != null; cur = cur.getSuperclass()) {
+        for (Method m : cur.getDeclaredMethods()) {
+          int mod = m.getModifiers();
+          if (isProtected(mod)) {
+            methods.putIfAbsent(methodDescriptor(m), m);
+          } else if (!isPublic(mod)) {
+            methods.put(methodDescriptor(m), m);
+          }
+        }
+      }
+      return methods;
+    });
   }
 
   /**
@@ -82,8 +107,21 @@ public class Dissector {
    * Returns all the fields of the class.
    */
   public static Map<String, Field> fields(Class<?> cls) {
-    checkNotNull(cls, "Class must not be null");
-    return fieldsCache.getUnchecked(cls);
+    checkArgument(cls != null, "Class must not be null");
+    return fieldsCache.computeIfAbsent(cls, k -> {
+      Map<String, Field> fields = new HashMap<>();
+      Arrays.stream(cls.getFields()).forEach(f -> fields.put(f.getName(), f));
+
+      for (Class<?> cur : componentClasses(cls)) {
+        for (Field f : cur.getDeclaredFields()) {
+          String fieldName = f.getName();
+          if (!fields.containsKey(fieldName) && !isPublic(f.getModifiers())) {
+            fields.put(fieldName, f);
+          }
+        }
+      }
+      return fields;
+    });
   }
 
   /**
@@ -99,8 +137,69 @@ public class Dissector {
    * Returns all properties in the class.
    */
   public static Map<String, Property> properties(Class<?> cls) {
-    checkNotNull(cls, "Class must not be null");
-    return propertiesCache.getUnchecked(cls);
+    checkArgument(cls != null, "Class must not be null");
+    return propertiesCache.computeIfAbsent(cls, k -> {
+      Map<String, Property> properties = new HashMap<>();
+
+      // Add properties based on getters and setters
+      Map<MethodDescriptor, Method> methods = methods(cls);
+      for (Map.Entry<MethodDescriptor, Method> entry : methods.entrySet()) {
+        MethodDescriptor desc = entry.getKey();
+
+        Method method = entry.getValue();
+        String methodName = method.getName();
+        String propertyName = Property.propertyNameFromMethod(methodName);
+        if (!properties.containsKey(propertyName)) {
+          int mod = method.getModifiers();
+          if (!Modifier.isStatic(mod)
+              && !Modifier.isAbstract(mod)
+              && Modifier.isPublic(mod)
+              && (methodName.startsWith("is")
+              || methodName.startsWith("get")
+              || methodName.startsWith("set"))) {
+
+            if (desc.parameterTypes.length == 0
+                && (methodName.startsWith("is")
+                || methodName.startsWith("get"))) {
+
+              Class<?> type = method.getReturnType();
+              Method setter = methods.get(new MethodDescriptor("set" + capFirst(propertyName), type));
+              if (setter != null && !setter.getReturnType().equals(void.class)) {
+                setter = null;
+              }
+              properties.put(propertyName, new Property(method, setter));
+
+            } else if (desc.parameterTypes.length == 1
+                && desc.name.startsWith("set")) {
+
+              Class<?> type = desc.parameterTypes[0];
+              Method getter = methods.get(new MethodDescriptor("get" + capFirst(propertyName)));
+              if (getter == null) {
+                getter = methods.get(new MethodDescriptor("is" + capFirst(propertyName)));
+              }
+              if (getter != null && !getter.getReturnType().equals(type)) {
+                getter = null;
+              }
+              properties.put(propertyName, new Property(getter, method));
+            }
+          }
+        }
+      }
+
+      // Add properties based on fields
+      Map<String, Field> fields = fields(cls);
+      for (Map.Entry<String, Field> entry : fields.entrySet()) {
+        String propertyName = entry.getKey();
+        if (!properties.containsKey(propertyName)) {
+          Field field = entry.getValue();
+          int mod = field.getModifiers();
+          if (!Modifier.isStatic(mod) && !Modifier.isFinal(mod)) {
+            properties.put(propertyName, new Property(field));
+          }
+        }
+      }
+      return properties;
+    });
   }
 
   /**
@@ -117,7 +216,17 @@ public class Dissector {
    * itself) in order of most specific (the class itself) to the least (java.lang.Object).
    */
   public static List<Class<?>> componentClasses(Class<?> cls) {
-    return componentsCache.getUnchecked(cls);
+    return componentsCache.computeIfAbsent(cls, k -> {
+      List<Class<?>> classes = new ArrayList<>();
+      classes.add(cls);
+      classes.addAll(Arrays.asList(cls.getInterfaces()));
+
+      Class<?> superClass = cls.getSuperclass();
+      if (superClass != null) {
+        classes.addAll(componentClasses(cls.getSuperclass()));
+      }
+      return Collections.unmodifiableList(classes);
+    });
   }
 
   /**
@@ -176,158 +285,25 @@ public class Dissector {
   /**
    * Constructors cache.
    */
-  private final static LoadingCache<Class<?>, Set<Constructor<?>>> ctorsCache =
-      CacheBuilder.newBuilder().build(new CacheLoader<>() {
-        @Override
-        public Set<Constructor<?>> load(Class<?> cls) {
-          // add all public constructors
-          Set<Constructor<?>> ctors = new HashSet<>();
-          Collections.addAll(ctors, cls.getConstructors());
-
-          // add non-public declared constructors
-          Stream.of(cls.getDeclaredConstructors())
-              .filter(c -> !isPublic(c.getModifiers()))
-              .forEach(ctors::add);
-
-          return ctors;
-        }
-      });
+  private final static ConcurrentMap<Class<?>, Set<Constructor<?>>> ctorsCache = new ConcurrentHashMap<>();
 
   /**
    * Methods cache.
    */
-  private final static LoadingCache<Class<?>, Map<MethodDescriptor, Method>> methodsCache =
-      CacheBuilder.newBuilder().build(new CacheLoader<>() {
-        @Override
-        public Map<MethodDescriptor, Method> load(Class<?> cls) {
-          // add all public methods
-          Map<MethodDescriptor, Method> methods = new HashMap<>();
-          Arrays.stream(cls.getMethods()).forEach(m -> methods.put(methodDescriptor(m), m));
-
-          // add non-public declared methods
-          for (Class<?> cur = cls; cur != null; cur = cur.getSuperclass()) {
-            for (Method m : cur.getDeclaredMethods()) {
-              int mod = m.getModifiers();
-              if (isProtected(mod)) {
-                methods.putIfAbsent(methodDescriptor(m), m);
-              } else if (!isPublic(mod)) {
-                methods.put(methodDescriptor(m), m);
-              }
-            }
-          }
-          return methods;
-        }
-      });
+  private final static ConcurrentMap<Class<?>, Map<MethodDescriptor, Method>> methodsCache = new ConcurrentHashMap<>();
 
   /**
    * Fields cache.
    */
-  private final static LoadingCache<Class<?>, Map<String, Field>> fieldsCache =
-      CacheBuilder.newBuilder().build(new CacheLoader<>() {
-        @Override
-        public Map<String, Field> load(Class<?> cls) {
-          Map<String, Field> fields = new HashMap<>();
-          Arrays.stream(cls.getFields()).forEach(f -> fields.put(f.getName(), f));
-
-          for (Class<?> cur : componentClasses(cls)) {
-            for (Field f : cur.getDeclaredFields()) {
-              String fieldName = f.getName();
-              if (!fields.containsKey(fieldName) && !isPublic(f.getModifiers())) {
-                fields.put(fieldName, f);
-              }
-            }
-          }
-          return fields;
-        }
-      });
+  private final static ConcurrentMap<Class<?>, Map<String, Field>> fieldsCache = new ConcurrentHashMap<>();
 
   /**
    * Properties cache.
    */
-  private final static LoadingCache<Class<?>, Map<String, Property>> propertiesCache =
-      CacheBuilder.newBuilder().build(new CacheLoader<>() {
-        @Override
-        public Map<String, Property> load(Class<?> cls) {
-          Map<String, Property> properties = new HashMap<>();
-
-          // Add properties based on getters and setters
-          Map<MethodDescriptor, Method> methods = methods(cls);
-          for (Map.Entry<MethodDescriptor, Method> entry : methods.entrySet()) {
-            MethodDescriptor desc = entry.getKey();
-
-            Method method = entry.getValue();
-            String methodName = method.getName();
-            String propertyName = Property.propertyNameFromMethod(methodName);
-            if (!properties.containsKey(propertyName)) {
-              int mod = method.getModifiers();
-              if (!Modifier.isStatic(mod)
-                  && !Modifier.isAbstract(mod)
-                  && Modifier.isPublic(mod)
-                  && (methodName.startsWith("is")
-                  || methodName.startsWith("get")
-                  || methodName.startsWith("set"))) {
-
-                if (desc.parameterTypes.length == 0
-                    && (methodName.startsWith("is")
-                    || methodName.startsWith("get"))) {
-
-                  Class<?> type = method.getReturnType();
-                  Method setter = methods.get(new MethodDescriptor("set" + capFirst(propertyName), type));
-                  if (setter != null && !setter.getReturnType().equals(void.class)) {
-                    setter = null;
-                  }
-                  properties.put(propertyName, new Property(method, setter));
-
-                } else if (desc.parameterTypes.length == 1
-                    && desc.name.startsWith("set")) {
-
-                  Class<?> type = desc.parameterTypes[0];
-                  Method getter = methods.get(new MethodDescriptor("get" + capFirst(propertyName)));
-                  if (getter == null) {
-                    getter = methods.get(new MethodDescriptor("is" + capFirst(propertyName)));
-                  }
-                  if (getter != null && !getter.getReturnType().equals(type)) {
-                    getter = null;
-                  }
-                  properties.put(propertyName, new Property(getter, method));
-                }
-              }
-            }
-          }
-
-          // Add properties based on fields
-          Map<String, Field> fields = fields(cls);
-          for (Map.Entry<String, Field> entry : fields.entrySet()) {
-            String propertyName = entry.getKey();
-            if (!properties.containsKey(propertyName)) {
-              Field field = entry.getValue();
-              int mod = field.getModifiers();
-              if (!Modifier.isStatic(mod) && !Modifier.isFinal(mod)) {
-                properties.put(propertyName, new Property(field));
-              }
-            }
-          }
-          return properties;
-        }
-      });
+  private final static ConcurrentMap<Class<?>, Map<String, Property>> propertiesCache = new ConcurrentHashMap<>();
 
   /**
    * Class components cache.
    */
-  private final static LoadingCache<Class<?>, List<Class<?>>> componentsCache =
-      CacheBuilder.newBuilder().build(new CacheLoader<>() {
-        @Override
-        public List<Class<?>> load(Class<?> cls) throws Exception {
-          List<Class<?>> classes = new ArrayList<>();
-          classes.add(cls);
-          classes.addAll(Arrays.asList(cls.getInterfaces()));
-
-          Class<?> superClass = cls.getSuperclass();
-          if (superClass != null) {
-            classes.addAll(componentsCache.get(cls.getSuperclass()));
-          }
-
-          return Collections.unmodifiableList(classes);
-        }
-      });
+  private final static ConcurrentMap<Class<?>, List<Class<?>>> componentsCache = new ConcurrentHashMap<>();
 }

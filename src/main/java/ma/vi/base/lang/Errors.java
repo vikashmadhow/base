@@ -47,6 +47,17 @@ public class Errors {
     return e;
   }
 
+  /**
+   * If condition is false, throws an IllegalArgumentException with
+   * the given message. This is similar to the function with the same
+   * name from Google Guava.
+   */
+  public static void checkArgument(boolean condition, String message) {
+    if (!condition) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
   public static RuntimeException unchecked(Throwable e) {
     return unchecked(e, null);
   }

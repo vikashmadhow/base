@@ -8,8 +8,7 @@ import ma.vi.base.lang.Builder;
 
 import java.io.Reader;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static ma.vi.base.lang.Errors.checkArgument;
 
 /**
  * A builder for {@link XmlReader} providing a simple method for
@@ -31,7 +30,7 @@ public class XmlReaderBuilder implements Builder<XmlReader> {
    * Creates a new builder.
    */
   public static XmlReaderBuilder newBuilder(Reader reader) {
-    checkNotNull(reader, "Reader cannot be null");
+    checkArgument(reader != null, "Reader cannot be null");
     XmlReaderBuilder builder = new XmlReaderBuilder();
     builder.reader = reader;
     return builder;
