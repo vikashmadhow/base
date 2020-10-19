@@ -56,26 +56,16 @@ public class Fragment {
      * {@link javax.xml.stream.XMLStreamConstants}.
      */
     public static Type of(int code) {
-      switch (code) {
-        case START_DOCUMENT:
-          return T_START_DOCUMENT;
-        case END_DOCUMENT:
-          return T_END_DOCUMENT;
-        case START_ELEMENT:
-          return T_START_ELEMENT;
-        case END_ELEMENT:
-          return T_END_ELEMENT;
-        case PROCESSING_INSTRUCTION:
-          return T_PROCESSING_INSTRUCTION;
-        case COMMENT:
-          return T_COMMENT;
-        case CHARACTERS:
-        case SPACE:
-        case CDATA:
-          return T_TEXT;
-        default:
-          throw new IllegalArgumentException("Unknown or unsupported XML tag code: " + code);
-      }
+      return switch (code) {
+        case START_DOCUMENT -> T_START_DOCUMENT;
+        case END_DOCUMENT -> T_END_DOCUMENT;
+        case START_ELEMENT -> T_START_ELEMENT;
+        case END_ELEMENT -> T_END_ELEMENT;
+        case PROCESSING_INSTRUCTION -> T_PROCESSING_INSTRUCTION;
+        case COMMENT -> T_COMMENT;
+        case CHARACTERS, SPACE, CDATA -> T_TEXT;
+        default -> throw new IllegalArgumentException("Unknown or unsupported XML tag code: " + code);
+      };
     }
   }
 

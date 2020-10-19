@@ -199,6 +199,75 @@ public class ArrayUtils {
     return list.toArray((T[]) Array.newInstance(componentType, 0));
   }
 
+  public static <T extends Comparable<T>> T[] insertionSort(T[] array) {
+    return insertionSort(array, 0, array.length);
+  }
+
+  public static <T extends Comparable<T>> T[] insertionSort(T[] array, int start, int end) {
+    for (int i = start + 1; i < end; i++) {
+      T value = array[i];
+      int j = i;
+      while (j > start && array[j-1].compareTo(value) > 0) {
+        array[j] = array[j-1];
+        j -= 1;
+      }
+      array[j] = value;
+    }
+    return array;
+  }
+
+  public static <T extends Comparable<T>> T[] quickSort(T[] array) {
+    return quickSort(array, 0, array.length - 1);
+  }
+
+  public static <T extends Comparable<T>> T[] quickSort(T[] array, int start, int end) {
+    if (start < end) {
+      int p = partition(array, start, end);
+      quickSort(array, start, p - 1);
+      quickSort(array, p + 1, end);
+    }
+    return array;
+  }
+
+  public static <T extends Comparable<T>> int partition(T[] array, int start, int end) {
+    int i = start - 1;
+    T pivot = array[end];
+    for (int j = start; j < end; j++) {
+      if (array[j].compareTo(pivot) < 0) {
+        i += 1;
+        swap(array, i, j);
+      }
+    }
+    i += 1;
+    swap(array, i, end);
+    return i;
+  }
+
+  public static <T> void swap(T[] array, int i, int j) {
+    T temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+
+  public static <T extends Comparable<T>> T kth(T[] array, int k) {
+    return kth(array, k, 0, array.length - 1);
+  }
+
+  public static <T extends Comparable<T>> T kth(T[] array, int k, int start, int end) {
+    if (start <= end) {
+      int p = partition(array, start, end);
+      int position = p - start + 1;
+      if (position < k) {
+        return kth(array, k - position, p + 1, end);
+      } else if (position > k) {
+        return kth(array, k, start, p - 1);
+      } else {
+        return array[p];
+      }
+    }
+    return null;
+  }
+
   /**
    * Escape commas and square brackets in array elements as these characters
    * are used to encode the start, end and separation of elements in the array
@@ -206,6 +275,5 @@ public class ArrayUtils {
    */
   public static final Escape ARRAY_ESCAPE = new Escape("\\,[]");
 
-  private ArrayUtils() {
-  }
+  private ArrayUtils() {}
 }

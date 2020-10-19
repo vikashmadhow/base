@@ -4,8 +4,6 @@
 
 package ma.vi.base.xml;
 
-import ma.vi.base.collections.Maps;
-import ma.vi.base.tuple.T2;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
 
@@ -16,9 +14,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static ma.vi.base.lang.Errors.checkArgument;
 import static java.util.Collections.emptyMap;
 import static javax.xml.stream.XMLStreamConstants.*;
+import static ma.vi.base.lang.Errors.checkArgument;
 import static ma.vi.base.lang.Errors.unchecked;
 import static ma.vi.base.xml.Fragment.Type.*;
 
@@ -208,8 +206,7 @@ public class XmlReader implements Iterable<Fragment>, Iterator<Fragment>, AutoCl
 
       case PROCESSING_INSTRUCTION:
         return new Fragment(T_PROCESSING_INSTRUCTION, null,
-            Maps.of(T2.of("PITarget", xml.getPITarget()),
-                T2.of("PIData", xml.getPIData())));
+            Map.of("PITarget", xml.getPITarget(), "PIData", xml.getPIData()));
 
       default:
         return new Fragment(tag, null, emptyMap());
