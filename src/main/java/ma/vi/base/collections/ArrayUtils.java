@@ -8,10 +8,7 @@ import ma.vi.base.string.Escape;
 import ma.vi.base.util.Convert;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Simple array utility functions.
@@ -103,7 +100,7 @@ public class ArrayUtils {
   public static long[] toLongArray(final double[] values) {
     long[] longs = new long[values.length];
     for (int i = 0; i < values.length; i++) {
-      longs[i] = (long) values[i];
+      longs[i] = (long)values[i];
     }
     return longs;
   }
@@ -138,10 +135,10 @@ public class ArrayUtils {
       return array;
     } else if (deletedLength < 0) {
       throw new IllegalArgumentException("The number of deleted items is less than 0, start=" +
-          start + ", end=" + end);
+                                             start + ", end=" + end);
     } else {
       Class<?> componentType = array.getClass().getComponentType();
-      T[] deleted = (T[]) Array.newInstance(componentType, array.length - deletedLength);
+      T[] deleted = (T[])Array.newInstance(componentType, array.length - deletedLength);
       int i = 0;
       for (; i < start; i++) {
         deleted[i] = array[i];
@@ -160,7 +157,7 @@ public class ArrayUtils {
    */
   public static <T> int indexOf(T[] array, T value) {
     for (int i = 0; i < array.length; i++) {
-      if (value == null ? array[i] == null : value.equals(array[i])) {
+      if (Objects.equals(value, array[i])) {
         return i;
       }
     }
@@ -173,7 +170,7 @@ public class ArrayUtils {
    */
   public static <T> int lastIndexOf(T[] array, T value) {
     for (int i = array.length - 1; i >= 0; i--) {
-      if (value == null ? array[i] == null : value.equals(array[i])) {
+      if (Objects.equals(value, array[i])) {
         return i;
       }
     }
@@ -193,22 +190,28 @@ public class ArrayUtils {
   public static <T> T[] toArray(String content, Class<T> componentType) {
     String remapped = ARRAY_ESCAPE.map(content);
     List<T> list = new ArrayList<>();
-    for (String el : remapped.split(",")) {
-      list.add((T) Convert.convert(ARRAY_ESCAPE.demap(el), componentType));
+    for (String el: remapped.split(",")) {
+      list.add((T)Convert.convert(ARRAY_ESCAPE.demap(el), componentType));
     }
-    return list.toArray((T[]) Array.newInstance(componentType, 0));
+    return list.toArray((T[])Array.newInstance(componentType, 0));
   }
+
+  
 
   public static <T extends Comparable<T>> T[] insertionSort(T[] array) {
-    return insertionSort(array, 0, array.length);
+    return insertionSort(array, Comparator.naturalOrder());
   }
 
-  public static <T extends Comparable<T>> T[] insertionSort(T[] array, int start, int end) {
+  public static <T> T[] insertionSort(T[] array, Comparator<T> comparator) {
+    return insertionSort(array, comparator, 0, array.length);
+  }
+
+  public static <T> T[] insertionSort(T[] array, Comparator<T> comparator, int start, int end) {
     for (int i = start + 1; i < end; i++) {
       T value = array[i];
       int j = i;
-      while (j > start && array[j-1].compareTo(value) > 0) {
-        array[j] = array[j-1];
+      while (j > start && comparator.compare(array[j - 1], value) > 0) {
+        array[j] = array[j - 1];
         j -= 1;
       }
       array[j] = value;
@@ -217,23 +220,27 @@ public class ArrayUtils {
   }
 
   public static <T extends Comparable<T>> T[] quickSort(T[] array) {
-    return quickSort(array, 0, array.length - 1);
+    return quickSort(array, Comparator.naturalOrder(), 0, array.length - 1);
   }
 
-  public static <T extends Comparable<T>> T[] quickSort(T[] array, int start, int end) {
+  public static <T> T[] quickSort(T[] array, Comparator<T> comparator) {
+    return quickSort(array, comparator, 0, array.length - 1);
+  }
+
+  public static <T> T[] quickSort(T[] array, Comparator<T> comparator, int start, int end) {
     if (start < end) {
-      int p = partition(array, start, end);
-      quickSort(array, start, p - 1);
-      quickSort(array, p + 1, end);
+      int p = partition(array, comparator, start, end);
+      quickSort(array, comparator, start, p - 1);
+      quickSort(array, comparator, p + 1, end);
     }
     return array;
   }
 
-  public static <T extends Comparable<T>> int partition(T[] array, int start, int end) {
+  public static <T> int partition(T[] array, Comparator<T> comparator, int start, int end) {
     int i = start - 1;
     T pivot = array[end];
     for (int j = start; j < end; j++) {
-      if (array[j].compareTo(pivot) < 0) {
+      if (comparator.compare(array[j], pivot) < 0) {
         i += 1;
         swap(array, i, j);
       }
@@ -250,17 +257,21 @@ public class ArrayUtils {
   }
 
   public static <T extends Comparable<T>> T kth(T[] array, int k) {
-    return kth(array, k, 0, array.length - 1);
+    return kth(array, k, Comparator.naturalOrder());
   }
 
-  public static <T extends Comparable<T>> T kth(T[] array, int k, int start, int end) {
+  public static <T> T kth(T[] array, int k, Comparator<T> comparator) {
+    return kth(array, k, comparator, 0, array.length - 1);
+  }
+
+  public static <T> T kth(T[] array, int k, Comparator<T> comparator, int start, int end) {
     if (start <= end) {
-      int p = partition(array, start, end);
+      int p = partition(array, comparator, start, end);
       int position = p - start + 1;
       if (position < k) {
-        return kth(array, k - position, p + 1, end);
+        return kth(array, k - position, comparator, p + 1, end);
       } else if (position > k) {
-        return kth(array, k, start, p - 1);
+        return kth(array, k, comparator, start, p - 1);
       } else {
         return array[p];
       }
