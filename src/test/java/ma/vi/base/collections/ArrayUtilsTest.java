@@ -1,14 +1,15 @@
 package ma.vi.base.collections;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 import static ma.vi.base.collections.ArrayUtils.*;
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Vikash Madhow (vikash.madhow@gmail.com)
  */
-public class ArrayUtilsTest extends TestCase {
+public class ArrayUtilsTest {
+  @Test
   public void testInsertionSort() {
     assertArrayEquals(insertionSort(new Integer[0]), new Integer[0]);
     assertArrayEquals(insertionSort(new Integer[]{1}), new Integer[]{1});
@@ -17,6 +18,7 @@ public class ArrayUtilsTest extends TestCase {
     assertArrayEquals(insertionSort(new Integer[]{4,6,6,4,3,3,3}), new Integer[]{3,3,3,4,4,6,6});
   }
 
+  @Test
   public void testQuickSort() {
     assertArrayEquals(quickSort(new Integer[0]), new Integer[0]);
     assertArrayEquals(quickSort(new Integer[]{1}), new Integer[]{1});
@@ -25,6 +27,7 @@ public class ArrayUtilsTest extends TestCase {
     assertArrayEquals(quickSort(new Integer[]{4,6,6,4,3,3,3}), new Integer[]{3,3,3,4,4,6,6});
   }
 
+  @Test
   public void testKth() {
     assertSame(1, kth(new Integer[]{5,6,4,7,2,1,10,3,9,8}, 1));
     assertSame(2, kth(new Integer[]{5,6,4,7,2,1,10,3,9,8}, 2));

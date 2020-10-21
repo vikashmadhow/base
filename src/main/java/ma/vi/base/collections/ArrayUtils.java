@@ -197,7 +197,6 @@ public class ArrayUtils {
   }
 
   
-
   public static <T extends Comparable<T>> T[] insertionSort(T[] array) {
     return insertionSort(array, Comparator.naturalOrder());
   }

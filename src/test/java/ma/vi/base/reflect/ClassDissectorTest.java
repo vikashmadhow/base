@@ -6,14 +6,14 @@ package ma.vi.base.reflect;
 
 import ma.vi.base.collections.Maps;
 import ma.vi.base.tuple.T2;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
 import static java.util.Collections.singleton;
 import static ma.vi.base.reflect.Dissector.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Vikash Madhow (vikash.madhow@gmail.com)

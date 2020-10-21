@@ -6,7 +6,7 @@ package ma.vi.base.xml;
 
 import ma.vi.base.collections.Maps;
 import ma.vi.base.tuple.T2;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 import java.util.Arrays;
@@ -18,7 +18,7 @@ import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.Collectors.toList;
 import static ma.vi.base.xml.Fragment.Type.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Vikash Madhow (vikash.madhow@gmail.com)

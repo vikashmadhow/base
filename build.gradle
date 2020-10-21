@@ -54,13 +54,21 @@ dependencies {
   compile "com.fasterxml.woodstox:woodstox-core:latest.release"
 
   // Use JUnit test framework
-  testImplementation 'junit:junit:4.12'
+  testImplementation(platform('org.junit:junit-bom:5.7.0'))
+  testImplementation('org.junit.jupiter:junit-jupiter:5.7.0')
+}
+
+test {
+  useJUnitPlatform()
+  testLogging {
+    events "passed", "skipped", "failed"
+  }
 }
 
 group = 'com.vikmad'
 archivesBaseName = 'base'
 sourceCompatibility = JavaVersion.VERSION_14
-version = "0.1.4"
+version = "0.1.7"
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 java {

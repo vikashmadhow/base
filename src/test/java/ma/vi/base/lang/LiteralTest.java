@@ -4,13 +4,13 @@
 
 package ma.vi.base.lang;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
 import static ma.vi.base.lang.Literal.*;
 import static ma.vi.base.reflect.Classes.classOf;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test literalization code.

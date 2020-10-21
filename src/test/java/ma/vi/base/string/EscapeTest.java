@@ -4,11 +4,11 @@
 
 package ma.vi.base.string;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test for escaping strings.
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNull;
 public class EscapeTest {
   private Escape esc;
 
-  @Before
+  @BeforeEach
   public void init() {
     String toEscape = "[,]\\";
     esc = new Escape(toEscape);

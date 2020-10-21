@@ -4,11 +4,12 @@
 
 package ma.vi.base.lang;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import static ma.vi.base.lang.SemVer.valid;
 import static ma.vi.base.lang.SemVer.version;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Vikash Madhow (vikash.madhow@gmail.com)
