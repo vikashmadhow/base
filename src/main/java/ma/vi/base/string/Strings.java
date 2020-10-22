@@ -269,31 +269,6 @@ public class Strings {
     return result.toString();
   }
 
-//    /**
-//     * Creates a label by expanding a camel case identifier.
-//     */
-//    public static String expandByCase(String text) {
-//        if (text == null) {
-//            throw new IllegalArgumentException("name to expand must not be null");
-//        }
-//
-//        StringBuilder result = new StringBuilder();
-//        Matcher matcher = CASE_SPLITTER.matcher(text);
-//        while (matcher.find()) {
-//            if (result.length() != 0) {
-//                if (isDigit(result.charAt(result.length() - 1)) ||
-//                    isDigit(text.charAt(matcher.start()))) {
-//                    // append a non-breakable space between a word and a number
-//                    result.append('\u00A0');
-//                } else {
-//                    result.append(' ');
-//                }
-//            }
-//            result.append(text.substring(matcher.start(), matcher.end()));
-//        }
-//        return result.toString();
-//    }
-
   /**
    * Creates a label by expanding a camel case identifier.
    */

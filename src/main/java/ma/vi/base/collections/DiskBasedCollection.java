@@ -32,12 +32,12 @@ public class DiskBasedCollection<E extends Serializable> extends AbstractCollect
       // index file
       indexFile = File.createTempFile("dbc", ".idx", tmpDir);
       indexFile.deleteOnExit();
-      index = new CachedRandomAccessFile<IndexEntry>(new RandomAccessFile(indexFile, "rw"), CACHE_SIZE);
+      index = new CachedRandomAccessFile<>(new RandomAccessFile(indexFile, "rw"), CACHE_SIZE);
 
       // contents file
       contentsFile = File.createTempFile("dbc", ".dat", tmpDir);
       contentsFile.deleteOnExit();
-      contents = new CachedRandomAccessFile<E>(new RandomAccessFile(contentsFile, "rw"), CACHE_SIZE);
+      contents = new CachedRandomAccessFile<>(new RandomAccessFile(contentsFile, "rw"), CACHE_SIZE);
     } catch (IOException ioe) {
       throw new RuntimeException(ioe);
     }
@@ -184,13 +184,13 @@ public class DiskBasedCollection<E extends Serializable> extends AbstractCollect
 
   @Override
   public Iterator<E> iterator() {
-    return new Iterator<E>() {
+    return new Iterator<>() {
       @Override
       public boolean hasNext() {
         if (toVisit == null) {
-          toVisit = new LinkedList<T2<Long, Boolean>>();
+          toVisit = new LinkedList<>();
           if (size > 0) {
-            toVisit.add(new T2<Long, Boolean>(0L, Boolean.FALSE));
+            toVisit.add(T2.of(0L, Boolean.FALSE));
           }
         }
         return !toVisit.isEmpty();
@@ -210,7 +210,7 @@ public class DiskBasedCollection<E extends Serializable> extends AbstractCollect
               visiting.b = Boolean.TRUE;
               if (indexEntry.nodes[LEFT] >= 0) {
                 // push left node
-                toVisit.addLast(new T2<Long, Boolean>(indexEntry.nodes[LEFT], Boolean.FALSE));
+                toVisit.addLast(T2.of(indexEntry.nodes[LEFT], Boolean.FALSE));
               }
             } else {
               // RIGHT side has not been visited; remove before we visit right
@@ -218,7 +218,7 @@ public class DiskBasedCollection<E extends Serializable> extends AbstractCollect
               toVisit.removeLast();
               if (indexEntry.nodes[RIGHT] >= 0) {
                 // push right node
-                toVisit.addLast(new T2<Long, Boolean>(indexEntry.nodes[RIGHT], Boolean.FALSE));
+                toVisit.addLast(T2.of(indexEntry.nodes[RIGHT], Boolean.FALSE));
               }
 
               // before visiting right return this value
@@ -253,7 +253,7 @@ public class DiskBasedCollection<E extends Serializable> extends AbstractCollect
       throw new IllegalArgumentException("object parameter is null.");
     }
     try {
-      T1<Boolean> removed = new T1<Boolean>(Boolean.FALSE);
+      T1<Boolean> removed = T1.of(Boolean.FALSE);
       internalRemove(null, (E)object, removed);
       return removed.a;
     } catch (IOException ioe) {
@@ -377,7 +377,7 @@ public class DiskBasedCollection<E extends Serializable> extends AbstractCollect
             // found
             IndexEntry found = new IndexEntry(entry);
             found.indexPosition = indexPos;
-            return new T2<IndexEntry, IndexEntry>(found, ancestor);
+            return T2.of(found, ancestor);
           } else {
             ancestor = new IndexEntry(entry);
             ancestor.indexPosition = indexPos;

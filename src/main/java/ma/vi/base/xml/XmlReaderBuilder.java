@@ -11,17 +11,19 @@ import java.io.Reader;
 import static ma.vi.base.lang.Errors.checkArgument;
 
 /**
+ * <p>
  * A builder for {@link XmlReader} providing a simple method for
  * overriding the latter's defaults. Usage scenario:
+ * </p>
  *
- * <code>
+ * <pre>
  *    XmlReader xml =
  *        XmlReaderBuilder.newBuilder(new StringReader(xmlText))
  *            .discardInterElementSpaces(false)   // do not discard spaces between elements
  *            .discardComments(false)             // do not discard comments
  *            .rewindCapacity(10)                 // allow rewinding up to 10 positions back
  *            .build();
- *  </code>
+ *  </pre>
  *
  * @author Vikash Madhow (vikash.madhow@gmail.com)
  */

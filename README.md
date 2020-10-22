@@ -30,7 +30,7 @@ or, better, through `ma.vi.base.xml.XmlReaderBuilder`. `XmlReader` is an iterato
 each `Fragment` carrying information on its type (e.g. element start, element end, comment, text, etc.)
 and content. Example use:
 
-    XmlReader xml =XmlReaderBuilder.newBuilder(new StringReader(xmlText))
+    XmlReader xml = XmlReaderBuilder.newBuilder(new StringReader(xmlText))
                          .discardInterElementSpaces(false)   // do not discard spaces between elements
                          .discardComments(false)             // do not discard comments
                          .rewindCapacity(10)                 // allow rewinding up to 10 positions back
@@ -49,4 +49,36 @@ components can be created by subclassing the `AbstractTuple` class or implementi
 types. The `StringTrie` subclass implements the classic tries on strings and the `PathTrie` subclass extends
 this concept to paths which are sequence of path elements (files and folders).
  
-   
+### Union-Find
+`ma.vi.base.unionfind.UnionFind` is a generic implementation of the union-find structure backed by as hashmap
+with implementing path-compression. This structure represents a set of disjoint sets with operations to find and
+merge sets in amortized constant time.
+
+### String escaping and utilities
+`ma.vi.base.string.Escape` can be used to find and escape and unescape certain characters in strings. It is 
+useful when parsing certain arbitrary character sequences. It works by temporarily mapping the set of denoted
+special characters to the unicode private area and remapping them back to unescape. `ma.vi.base.string.Strings`
+contains  static functions to generate random strings and to, otherwise, manipulate strings.
+
+`ma.vi.base.crypt.Obfuscator` can obfuscate phrases which need to be stored or transmitted in some form other than
+plain text. This is not an encryption function as it does not use a key; it merely manipulates the characters in the
+text and inject certain random characters to obscure the original phrase in a manner that it can be revealed with
+a reverse function.
+  
+
+### Reflection
+`ma.vi.base.reflect.Dissector` uses Java reflection to provide access to the different elements of a class. 
+`ma.vi.base.reflect.Property` is an abstraction of fields and properties (get and set accessors) allowing
+their values to be read and written irrespective of how they are implemented (as private field with or without
+accessors).
+
+### Collections
+`ma.vi.base.collections.DiskBasedCollection` is an ordered collection of objects that is transparently stored
+on disk allowing it to grow to huge size with minimal impact on RAM. The objects are stored in two files on disk,
+with an index file containing pointers to a data file. The index file is structured as a self-balancing AA tree
+and both files are accessed through `ma.vi.base.cache.CachedRandomAccessFile` which optimizes read and write
+access to random-access files.
+
+The `ma.vi.base.collections` package contains other classes which facilitates working with maps, sets, arrays, etc. 
+
+
