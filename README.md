@@ -11,12 +11,12 @@ To use through Maven, include the following dependency in your pom.xml file:
     <dependency>
       <groupId>com.vikmad</groupId>
       <artifactId>base</artifactId>
-      <version>0.1.8</version>
+      <version>0.1.9</version>
     </dependency>
     
 or in Gradle, add the following line to your dependencies list in your build.gradle file:
 
-    compile "com.vikmad:base:0.1.8"
+    compile "com.vikmad:base:0.1.9"
     
 ## Components and example usage
 Following are overview of the some of the components in this project. More detailed information
