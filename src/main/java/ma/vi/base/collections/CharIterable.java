@@ -10,6 +10,10 @@ public class CharIterable implements Iterable<Character> {
     this.seq = seq;
   }
 
+  public static CharIterable of(CharSequence seq) {
+    return new CharIterable(seq);
+  }
+
   @Override
   public Iterator<Character> iterator() {
     return new CharIterator(seq);

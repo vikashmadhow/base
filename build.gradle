@@ -68,7 +68,7 @@ test {
 group = 'com.vikmad'
 archivesBaseName = 'base'
 sourceCompatibility = JavaVersion.VERSION_14
-version = "0.1.9"
+version = "0.2.0"
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 java {

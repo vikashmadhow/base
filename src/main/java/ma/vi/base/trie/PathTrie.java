@@ -23,23 +23,23 @@ public class PathTrie<V> extends Trie<String, V> {
   }
 
   public V put(String path, V value) {
-    return super.put(Arrays.asList(path.split(separator)), value);
+    return super.put(Arrays.asList(split(path)), value);
   }
 
   public V get(String path) {
-    return super.get(Arrays.asList(path.split(separator)));
+    return super.get(Arrays.asList(split(path)));
   }
 
   public List<T2<String, V>> getPrefixed(String path) {
-    return toPath(super.getPrefixed(Arrays.asList(path.split(separator))));
+    return toPath(super.getPrefixed(Arrays.asList(split(path))));
   }
 
   public void delete(String path) {
-    super.delete(Arrays.asList(path.split(separator)));
+    super.delete(Arrays.asList(split(path)));
   }
 
   public boolean deletePrefixed(String path) {
-    return super.deletePrefixed(Arrays.asList(path.split(separator)));
+    return super.deletePrefixed(Arrays.asList(split(path)));
   }
 
   protected List<T2<String, V>> toPath(List<T2<List<String>, V>> from) {
@@ -49,6 +49,14 @@ public class PathTrie<V> extends Trie<String, V> {
                                   .collect(joining(separator)),
                                t.b))
                .collect(toList());
+  }
+
+  private String[] split(String path) {
+    String[] p = path.split(separator, -1);
+    if (p.length > 1 && p[p.length - 1].length() == 0) {
+      p = Arrays.copyOfRange(p, 0, p.length - 1);
+    }
+    return p;
   }
 
   private final String separator;
