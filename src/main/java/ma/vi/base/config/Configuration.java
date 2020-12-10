@@ -22,19 +22,61 @@ import static ma.vi.base.lang.Errors.unchecked;
 public class Configuration extends HashMap<String, Object> {
 
   /**
-   * Package-protected constructor is used for testing.
+   * Read configuration from a YAML file producing a map of string to objects.
+   * For example, this config file:
+   * <pre>
+   * database:
+   *   server:
+   *     host: xyz
+   *     port: 123
+   *   user:
+   *     name: avi
+   *     pass: emi
+   * </pre>
+   *
+   * will produce this map (without the quotes for strings):
+   * <pre>
+   * "database.server.host" to "xyz"
+   * "database.server.port" to 123
+   * "database.user.name" to "avi"
+   * "database.user.pass" to "emi"
+   * </pre>
+   *
+   * @param configFile The file containing the YAML configuration
+   * @param unobfuscatePasswords Whether to unobfuscate passwords. If this is true
+   *                             the value of all keys containing the substring
+   *                             "password" or "secret" will be unobfuscated using
+   *                             {@link Obfuscator#unobfuscate(String)}.
    */
   public Configuration(String configFile, boolean unobfuscatePasswords) {
     this(unchecked(() -> new FileReader(configFile)), unobfuscatePasswords);
   }
 
   /**
-   * Package-protected constructor is used for testing.
+   * Similar to {@link #Configuration(String, boolean)} but reading the configuration
+   * data from the supplied reader.
    */
   public Configuration(Reader in, boolean unobfuscatePasswords) {
     Yaml yaml = new Yaml();
     read(yaml.load(in), unobfuscatePasswords, "");
     unchecked(in::close);
+  }
+
+  /**
+   * Creates a copy of the supplied configuration.
+   */
+  public Configuration(Configuration config) {
+    putAll(config);
+  }
+
+  /**
+   * Creates a new configuration from this configuration and add all elements
+   * from the supplied config, replacing values for any existing keys.
+   */
+  public Configuration extend(Map<String, Object> newConfig) {
+    Configuration config = new Configuration(this);
+    config.putAll(newConfig);
+    return config;
   }
 
   private void read(Map<String, Object> config, boolean unobfuscatePasswords, String prefix) {
@@ -56,4 +98,8 @@ public class Configuration extends HashMap<String, Object> {
       }
     }
   }
+
+  private Configuration() {}
+
+  public static final Configuration EMPTY = new Configuration();
 }
