@@ -5,6 +5,7 @@
 package ma.vi.base.config;
 
 import ma.vi.base.crypt.Obfuscator;
+import ma.vi.base.tuple.T2;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileReader;
@@ -67,6 +68,17 @@ public class Configuration extends HashMap<String, Object> {
    */
   public Configuration(Configuration config) {
     putAll(config);
+  }
+
+  /**
+   * Create a configuration from the list of values.
+   */
+  public static Configuration of(T2<String, Object>... values) {
+    Configuration c = new Configuration();
+    for (T2<String, Object> value: values) {
+      c.put(value.a(), value.b());
+    }
+    return c;
   }
 
   /**
