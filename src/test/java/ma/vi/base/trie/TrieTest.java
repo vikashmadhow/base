@@ -79,21 +79,25 @@ class TrieTest {
   @Test
   void pathTrie() {
     PathTrie<Integer> trie = new PathTrie<>();
+    String p0 = "/x/y";
     String p1 = "/x/y/z/b";
     String p2 = "/x/y/p/a";
     String p3 = "x/y/p/a";
     trie.put(p1, 50);
     trie.put(p2, 40);
     trie.put(p3, 30);
+    trie.put(p0, 20);
 
     assertEquals(50, trie.get(p1));
     assertEquals(40, trie.get(p2));
 
-    assertEquals(new HashSet<>(Arrays.asList(T2.of(p1, 50),
+    assertEquals(new HashSet<>(Arrays.asList(T2.of(p0, 20),
+                                             T2.of(p1, 50),
                                              T2.of(p2, 40))),
                  new HashSet<>(trie.getPrefixed("/x/y")));
 
-    assertEquals(new HashSet<>(Arrays.asList(T2.of(p1, 50),
+    assertEquals(new HashSet<>(Arrays.asList(T2.of(p0, 20),
+                                             T2.of(p1, 50),
                                              T2.of(p2, 40))),
                  new HashSet<>(trie.getPrefixed("/")));
 
@@ -106,23 +110,28 @@ class TrieTest {
     assertEquals(emptySet(),
                  new HashSet<>(trie.getPrefixed("/a")));
 
-    assertEquals(new HashSet<>(Arrays.asList(T2.of(p1, 50),
+    assertEquals(new HashSet<>(Arrays.asList(T2.of(p0, 20),
+                                             T2.of(p1, 50),
                                              T2.of(p2, 40))),
                  new HashSet<>(trie.getPrefixed("")));
 
-    assertEquals(new HashSet<>(Arrays.asList(T2.of(p1, 50),
+    assertEquals(new HashSet<>(Arrays.asList(T2.of(p0, 20),
+                                             T2.of(p1, 50),
                                              T2.of(p2, 40))),
                  new HashSet<>(trie.getPrefixed("/x")));
 
-    assertEquals(new HashSet<>(Arrays.asList(T2.of(p1, 50),
+    assertEquals(new HashSet<>(Arrays.asList(T2.of(p0, 20),
+                                             T2.of(p1, 50),
                                              T2.of(p2, 40))),
                  new HashSet<>(trie.getPrefixed("/x/")));
 
-    assertEquals(new HashSet<>(Arrays.asList(T2.of(p1, 50),
+    assertEquals(new HashSet<>(Arrays.asList(T2.of(p0, 20),
+                                             T2.of(p1, 50),
                                              T2.of(p2, 40))),
                  new HashSet<>(trie.getPrefixed("/x/y")));
 
-    assertEquals(new HashSet<>(Arrays.asList(T2.of(p1, 50),
+    assertEquals(new HashSet<>(Arrays.asList(T2.of(p0, 20),
+                                             T2.of(p1, 50),
                                              T2.of(p2, 40))),
                  new HashSet<>(trie.getPrefixed("/x/y/")));
 

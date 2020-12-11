@@ -93,15 +93,14 @@ public class Trie<U, V> {
 
   private List<T2<List<U>, V>> getPrefixed(List<U> prefix, Node<U, V> startFrom) {
     List<T2<List<U>, V>> values = new ArrayList<>();
-    if (startFrom.children.isEmpty()) {
-      List<U> list = new ArrayList<>(prefix);
+    List<U> list = new ArrayList<>(prefix);
+    if (startFrom.value != null) {
       values.add(T2.of(list, startFrom.value));
-    } else {
-      for (Map.Entry<U, Node<U, V>> child: startFrom.children.entrySet()) {
-        List<U> newPrefix = new ArrayList<>(prefix);
-        newPrefix.add(child.getKey());
-        values.addAll(getPrefixed(newPrefix, child.getValue()));
-      }
+    }
+    for (Map.Entry<U, Node<U, V>> child: startFrom.children.entrySet()) {
+      List<U> newPrefix = new ArrayList<>(prefix);
+      newPrefix.add(child.getKey());
+      values.addAll(getPrefixed(newPrefix, child.getValue()));
     }
     return values;
   }
