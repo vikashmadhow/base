@@ -159,13 +159,6 @@ public class Escape {
         .replace("\t", "\\t");
   }
 
-  /**
-   * Escapes single quotes in an ESQL query.
-   */
-  public static String escapeEsqlQuote(String value) {
-    return value.replace("'", "%q");
-  }
-
 //    /**
 //     * Unescape a string obtained from an SQL context to produce its actual value.
 //     */

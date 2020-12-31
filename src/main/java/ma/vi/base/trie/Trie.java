@@ -105,7 +105,7 @@ public class Trie<U, V> {
     return values;
   }
 
-  private static class Node<U, V> {
+  static class Node<U, V> {
     final Map<U, Node<U, V>> children = new HashMap<>();
     V value;
   }

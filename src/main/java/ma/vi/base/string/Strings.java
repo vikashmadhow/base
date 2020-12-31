@@ -367,15 +367,21 @@ public class Strings {
    * @param name  Name to make unique.
    * @return A unique name as per the set of names.
    */
-  public static String makeUnique(Set<String> names, String name) {
+  public static String makeUnique(Set<String> names, String name, boolean addToNames) {
     int pos = name.lastIndexOf('.');
     String previousExt = pos == -1 ? "" : name.substring(pos);
     String previousName = pos == -1 ? name : name.substring(0, pos);
     while (names.contains(name)) {
       name = previousName + "_" + Strings.random(4) + previousExt;
     }
-    names.add(name);
+    if (addToNames) {
+      names.add(name);
+    }
     return name;
+  }
+
+  public static String makeUnique(Set<String> names, String name) {
+    return makeUnique(names, name, true);
   }
 
   private Strings() {
