@@ -167,6 +167,125 @@ public class Numbers {
     }
   }
 
-  private Numbers() {
+  /**
+   * Returns the minimum value in the given variable list of numbers.
+   */
+  public static int min(int... nums) {
+    if (nums.length == 0) {
+      return Integer.MIN_VALUE;
+    } else {
+      int min = nums[0];
+      for (int i = 1; i < nums.length; i++) {
+        min = Math.min(min, nums[i]);
+      }
+      return min;
+    }
   }
+
+  /**
+   * Returns the minimum value in the given variable list of numbers.
+   */
+  public static long min(long... nums) {
+    if (nums.length == 0) {
+      return Long.MIN_VALUE;
+    } else {
+      long min = nums[0];
+      for (int i = 1; i < nums.length; i++) {
+        min = Math.min(min, nums[i]);
+      }
+      return min;
+    }
+  }
+
+  /**
+   * Returns the minimum value in the given variable list of numbers.
+   */
+  public static float min(float... nums) {
+    if (nums.length == 0) {
+      return Float.MIN_VALUE;
+    } else {
+      float min = nums[0];
+      for (int i = 1; i < nums.length; i++) {
+        min = Math.min(min, nums[i]);
+      }
+      return min;
+    }
+  }
+
+  /**
+   * Returns the minimum value in the given variable list of numbers.
+   */
+  public static double min(double... nums) {
+    if (nums.length == 0) {
+      return Float.MIN_VALUE;
+    } else {
+      double min = nums[0];
+      for (int i = 1; i < nums.length; i++) {
+        min = Math.min(min, nums[i]);
+      }
+      return min;
+    }
+  }
+
+  /**
+   * Returns the maximum value in the given variable list of numbers.
+   */
+  public static int max(int... nums) {
+    if (nums.length == 0) {
+      return Integer.MAX_VALUE;
+    } else {
+      int max = nums[0];
+      for (int i = 1; i < nums.length; i++) {
+        max = Math.max(max, nums[i]);
+      }
+      return max;
+    }
+  }
+
+  /**
+   * Returns the maximum value in the given variable list of numbers.
+   */
+  public static long max(long... nums) {
+    if (nums.length == 0) {
+      return Long.MAX_VALUE;
+    } else {
+      long max = nums[0];
+      for (int i = 1; i < nums.length; i++) {
+        max = Math.max(max, nums[i]);
+      }
+      return max;
+    }
+  }
+
+  /**
+   * Returns the maximum value in the given variable list of numbers.
+   */
+  public static float max(float... nums) {
+    if (nums.length == 0) {
+      return Float.MAX_VALUE;
+    } else {
+      float max = nums[0];
+      for (int i = 1; i < nums.length; i++) {
+        max = Math.max(max, nums[i]);
+      }
+      return max;
+    }
+  }
+
+  /**
+   * Returns the maximum value in the given variable list of numbers.
+   */
+  public static double max(double... nums) {
+    if (nums.length == 0) {
+      return Float.MAX_VALUE;
+    } else {
+      double max = nums[0];
+      for (int i = 1; i < nums.length; i++) {
+        max = Math.max(max, nums[i]);
+      }
+      return max;
+    }
+  }
+
+  private Numbers() {}
 }
