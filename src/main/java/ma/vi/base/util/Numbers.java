@@ -176,7 +176,9 @@ public class Numbers {
     } else {
       int min = nums[0];
       for (int i = 1; i < nums.length; i++) {
-        min = Math.min(min, nums[i]);
+        if (nums[i] < min) {
+          min = nums[i];
+        }
       }
       return min;
     }
@@ -191,7 +193,9 @@ public class Numbers {
     } else {
       long min = nums[0];
       for (int i = 1; i < nums.length; i++) {
-        min = Math.min(min, nums[i]);
+        if (nums[i] < min) {
+          min = nums[i];
+        }
       }
       return min;
     }
@@ -206,7 +210,9 @@ public class Numbers {
     } else {
       float min = nums[0];
       for (int i = 1; i < nums.length; i++) {
-        min = Math.min(min, nums[i]);
+        if (nums[i] < min) {
+          min = nums[i];
+        }
       }
       return min;
     }
@@ -221,7 +227,9 @@ public class Numbers {
     } else {
       double min = nums[0];
       for (int i = 1; i < nums.length; i++) {
-        min = Math.min(min, nums[i]);
+        if (nums[i] < min) {
+          min = nums[i];
+        }
       }
       return min;
     }
@@ -236,7 +244,9 @@ public class Numbers {
     } else {
       int max = nums[0];
       for (int i = 1; i < nums.length; i++) {
-        max = Math.max(max, nums[i]);
+        if (nums[i] > max) {
+          max = nums[i];
+        }
       }
       return max;
     }
@@ -251,7 +261,9 @@ public class Numbers {
     } else {
       long max = nums[0];
       for (int i = 1; i < nums.length; i++) {
-        max = Math.max(max, nums[i]);
+        if (nums[i] > max) {
+          max = nums[i];
+        }
       }
       return max;
     }
@@ -266,7 +278,9 @@ public class Numbers {
     } else {
       float max = nums[0];
       for (int i = 1; i < nums.length; i++) {
-        max = Math.max(max, nums[i]);
+        if (nums[i] > max) {
+          max = nums[i];
+        }
       }
       return max;
     }
@@ -281,7 +295,9 @@ public class Numbers {
     } else {
       double max = nums[0];
       for (int i = 1; i < nums.length; i++) {
-        max = Math.max(max, nums[i]);
+        if (nums[i] > max) {
+          max = nums[i];
+        }
       }
       return max;
     }
