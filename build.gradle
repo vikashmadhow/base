@@ -28,6 +28,10 @@ repositories {
   jcenter()
 }
 
+java {
+  modularity.inferModulePath = true
+}
+
 sourceSets {
   main {
     java {
@@ -49,10 +53,10 @@ sourceSets {
 
 dependencies {
   // This dependency is exported to consumers, that is to say found on their compile classpath.
-  compile "org.apache.commons:commons-lang3:latest.release"
-  compile "com.fasterxml.jackson.core:jackson-core:latest.release"
-  compile "com.fasterxml.woodstox:woodstox-core:latest.release"
-  compile "org.yaml:snakeyaml:latest.release"
+  implementation("org.apache.commons:commons-lang3:latest.release")
+  implementation("com.fasterxml.jackson.core:jackson-core:latest.release")
+  implementation("com.fasterxml.woodstox:woodstox-core:latest.release")
+  implementation("org.yaml:snakeyaml:latest.release")
 
   // Use JUnit test framework
   testImplementation(platform('org.junit:junit-bom:5.7.0'))
@@ -69,7 +73,7 @@ test {
 group = 'com.vikmad'
 archivesBaseName = 'base'
 sourceCompatibility = JavaVersion.VERSION_14
-version = "0.2.8"
+version = "0.3.0"
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 java {
