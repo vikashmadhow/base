@@ -388,27 +388,38 @@ public class Strings {
   }
 
   /**
-   * alpha-numeric characters; useful to generate random alpha-numeric strings
+   * Alpha-numeric characters; useful to generate random alpha-numeric strings.
    */
-  public static final char[] ALPHA_NUMERIC = new char[]{
+  public static final char[] ALPHA_NUMERIC = new char[] {
       '0', '1', '2', '3', '4', '5', '6', '7', '8',
       '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
       'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
-      'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+      'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+  };
 
   /**
-   * numeric characters; useful to generate random numeric strings
+   * Numeric characters; useful to generate random numeric strings.
    */
-  public static final char[] NUMERIC = new char[]{
-      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+  public static final char[] NUMERIC = new char[] {
+      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+  };
 
   /**
-   * alphabetic characters; useful to generate random alphabetic strings
+   * Alphabetic characters; useful to generate random alphabetic strings.
    */
-  public static final char[] ALPHABETIC = new char[]{
-      'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
-      'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
-      'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+  public static final char[] ALPHABETIC = new char[] {
+      'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+      'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
+      's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+  };
+
+  /**
+   * Hexadecimal characters.
+   */
+  public static final char[] HEX = new char[] {
+      'a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2',
+      '3', '4', '5', '6', '7', '8', '9'
+  };
 
   /**
    * Random number generator

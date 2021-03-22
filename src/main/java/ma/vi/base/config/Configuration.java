@@ -82,7 +82,7 @@ public class Configuration extends HashMap<String, Object> {
   }
 
   /**
-   * Creates a new configuration from this configuration and add all elements
+   * Creates a new configuration from this configuration and adds all elements
    * from the supplied config, replacing values for any existing keys.
    */
   public Configuration extend(Map<String, Object> newConfig) {
