@@ -216,7 +216,7 @@ public class Dissector {
    * itself) in order of most specific (the class itself) to the least (java.lang.Object).
    */
   public static List<Class<?>> componentClasses(Class<?> cls) {
-    return componentsCache.computeIfAbsent(cls, k -> {
+    if (!componentsCache.containsKey(cls)) {
       List<Class<?>> classes = new ArrayList<>();
       classes.add(cls);
       classes.addAll(Arrays.asList(cls.getInterfaces()));
@@ -225,8 +225,9 @@ public class Dissector {
       if (superClass != null) {
         classes.addAll(componentClasses(cls.getSuperclass()));
       }
-      return Collections.unmodifiableList(classes);
-    });
+      componentsCache.put(cls, classes);
+    }
+    return componentsCache.get(cls);
   }
 
   /**
