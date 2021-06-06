@@ -86,7 +86,9 @@ public class Convert {
     try {
       if (Number.class.isAssignableFrom(type)) {
         if (Numbers.isIntegral(type)) {
-          // remove fractional part which will be ignored
+          /*
+           * remove fractional part which will be ignored
+           */
           int pos = text.indexOf('.');
           if (pos != -1) {
             text = text.substring(0, pos);
@@ -108,7 +110,6 @@ public class Convert {
 
       } else if (Date.class.isAssignableFrom(type)) {
         return convertDate(text);
-
       }
     } catch (Exception e) {
       throw e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
@@ -126,32 +127,35 @@ public class Convert {
       if (value == null) {
         return null;
       } else if (value instanceof String) {
-        String v = ((String) value).trim().toLowerCase();
+        String v = ((String)value).trim().toLowerCase();
         return v.startsWith("t") || v.startsWith("y");
       } else if (value instanceof Number) {
         return ((Number) value).intValue() != 0;
       } else {
         return true;
       }
+    } else if (type.startsWith("date")) {
+      if (value instanceof Number) {
+        return new Date(((Number)value).longValue());
+      } else if (value instanceof String) {
+        return convertDate((String) value);
+      } else {
+        return value;
+      }
     } else if (value instanceof String) {
       if (type.equals("byte")
-          || type.equals("short")
-          || type.equals("int")
-          || type.equals("long")
-          || type.equals("float")
-          || type.equals("double")) {
+       || type.equals("short")
+       || type.equals("int")
+       || type.equals("long")
+       || type.equals("float")
+       || type.equals("double")) {
         return Numbers.convert((String) value);
-
-      } else if (type.startsWith("date")) {
-        return convertDate((String) value);
-
       } else {
         return value;
       }
     } else if (type.equals("string")) {
       if (value == null) {
         return null;
-
       } else {
         return value.toString();
       }
@@ -166,23 +170,17 @@ public class Convert {
   public static String sqlParameter(Object value) {
     if (value == null) {
       return "NULL";
-
     } else if (value instanceof Boolean) {
       boolean v = (Boolean) value;
       return v ? "TRUE" : "FALSE";
-
     } else if (value instanceof Date) {
       return Dates.toSqlDateLiteral((Date) value);
-
     } else if (value instanceof Number) {
       return value.toString();
-
     } else if (value instanceof Character) {
       return "'" + value + "'";
-
     } else if (value instanceof String) {
       return "'" + Escape.escapeSqlString((String) value) + "'";
-
     } else {
       throw new IllegalArgumentException(value.getClass() + " cannot be converted to a form supported by SQL");
     }
@@ -238,7 +236,9 @@ public class Convert {
           yearFound = true;
           compressed.insert(0, token + " ");
 
-          // push probable month position correspondingly
+          /*
+           * push probable month position correspondingly
+           */
           if (probableMonthStart != -1) {
             probableMonthStart += token.length() + 1;
             probableMonthEnd += token.length() + 1;
@@ -247,13 +247,17 @@ public class Convert {
           if (MONTH_PATTERN.matcher(token).matches()) {
             monthFound = true;
           } else if (DAY_OR_MONTH_PATTERN.matcher(token).matches()) {
-            // if we have already seen a month
+            /*
+             * if we have already seen a month
+             */
             if (monthFound) {
               dayFound = true;
             } else {
               int number = parseInt(token);
               if ((dayFound || yearFound) && probableMonthStart == -1 && number > 0 && number <= 12) {
-                // since we have already seen the year, this is a probable month
+                /*
+                 * since we have already seen the year, this is a probable month
+                 */
                 probableMonthStart = compressed.length();
                 probableMonthEnd = probableMonthStart + token.length();
               } else {

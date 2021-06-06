@@ -5,20 +5,20 @@
 package ma.vi.base.circular;
 
 import java.util.NoSuchElementException;
+import java.util.Queue;
 
 /**
- * A simple circular queue backed by an array where items
- * are written at the tail of the array and read off the head. When the tail
- * pointer reaches the end of the buffer, it wraps around to the start.
+ * A simple circular queue backed by an array where items are written at the tail
+ * of the array and read off the head. When the tail pointer reaches the end of
+ * the buffer, it wraps around to the start.
  * <p>
- * This buffer also supports push-back of items through the
- * {@link #unread()} and {@link #push(Object)} methods.
+ * This buffer also supports push-back of items through the {@link #unread()} and
+ * {@link #push(Object)} methods.
  *
  * @param <T> The type of the items in the buffer
  * @author vikash.madhow@gmail.com
  */
 public class CircularQueue<T> {
-
   /**
    * Creates a new circular buffer of the specified size.
    *
@@ -32,6 +32,7 @@ public class CircularQueue<T> {
     this.size = size;
     this.buffer = (T[]) new Object[size];
   }
+
 
   /**
    * Returns true if the buffer is empty.

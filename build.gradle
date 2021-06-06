@@ -73,7 +73,7 @@ test {
 group = 'com.vikmad'
 archivesBaseName = 'base'
 sourceCompatibility = JavaVersion.VERSION_14
-version = "0.3.2"
+version = "0.3.3"
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 java {
@@ -136,8 +136,8 @@ tasks.withType(Sign) {
   onlyIf { isReleaseVersion }
 }
 
-nexusStaging {
-  packageGroup = group
-  username = project.getProperty('ossrhUsername')
-  password = project.getProperty('ossrhPassword')
-}
+//nexusStaging {
+//  packageGroup = group
+//  username = project.getProperty('ossrhUsername')
+//  password = project.getProperty('ossrhPassword')
+//}
