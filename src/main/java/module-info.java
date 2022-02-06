@@ -5,8 +5,8 @@ module ma.vi.base {
   requires java.sql;
   requires jdk.unsupported;
 
-  requires org.codehaus.stax2;
   requires org.yaml.snakeyaml;
+  requires org.codehaus.stax2;
 
   exports ma.vi.base.cache;
   exports ma.vi.base.circular;

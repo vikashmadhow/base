@@ -28,9 +28,9 @@ repositories {
   jcenter()
 }
 
-java {
-  modularity.inferModulePath = true
-}
+// java {
+//   modularity.inferModulePath = true
+// }
 
 sourceSets {
   main {
@@ -53,14 +53,14 @@ sourceSets {
 
 dependencies {
   // This dependency is exported to consumers, that is to say found on their compile classpath.
-  implementation("org.apache.commons:commons-lang3:latest.release")
-  implementation("com.fasterxml.jackson.core:jackson-core:latest.release")
-  implementation("com.fasterxml.woodstox:woodstox-core:latest.release")
-  implementation("org.yaml:snakeyaml:latest.release")
+  implementation("org.apache.commons:commons-lang3:3.12.0")
+  implementation("com.fasterxml.jackson.core:jackson-core:2.13.1")
+  implementation('com.fasterxml.woodstox:woodstox-core:6.2.8')
+  implementation('org.yaml:snakeyaml:1.29')
 
   // Use JUnit test framework
-  testImplementation(platform('org.junit:junit-bom:5.7.0'))
-  testImplementation('org.junit.jupiter:junit-jupiter:5.7.0')
+  testImplementation(platform('org.junit:junit-bom:5.8.2'))
+  testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
 }
 
 test {
@@ -73,11 +73,11 @@ test {
 group = 'com.vikmad'
 archivesBaseName = 'base'
 sourceCompatibility = JavaVersion.VERSION_14
-version = "0.3.3"
+version = "0.3.4"
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 java {
-  modularity.inferModulePath = true
+  // modularity.inferModulePath = true
   withJavadocJar()
   withSourcesJar()
 }

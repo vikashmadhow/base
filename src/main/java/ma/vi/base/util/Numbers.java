@@ -17,71 +17,79 @@ public class Numbers {
    * Return the shortest number object which can hold the passed value.
    */
   public static Number shortestIntegralType(long value) {
-    return value >= -128 && value <= 127 ? (byte) value :
-           value >= -32768 && value <= 32767 ? (short) value :
-           value >= -2147483648 && value <= 2147483647 ? (int) value : value;
+    return value >= -128           && value <= 127            ? (byte) value :
+           value >= -32_768        && value <= 32_767         ? (short)value :
+           value >= -2_147_483_648 && value <= 2_147_483_647  ? (int)  value : value;
   }
 
   /**
    * Return true if the specified number is an integer.
    */
   public static boolean isIntegral(Number number) {
-    return number instanceof Byte || number instanceof Short ||
-        number instanceof Integer || number instanceof Long ||
-        number instanceof BigInteger;
+    return number instanceof Byte
+        || number instanceof Short
+        || number instanceof Integer
+        || number instanceof Long
+        || number instanceof BigInteger;
   }
 
   /**
    * Return true if the specified type is an integer.
    */
-  public static boolean isIntegral(Class numberType) {
-    return Byte.class.isAssignableFrom(numberType) ||
-        Short.class.isAssignableFrom(numberType) ||
-        Integer.class.isAssignableFrom(numberType) ||
-        Long.class.isAssignableFrom(numberType) ||
-        BigInteger.class.isAssignableFrom(numberType);
+  public static boolean isIntegral(Class<?> numberType) {
+    return Byte      .class.isAssignableFrom(numberType)
+        || Short     .class.isAssignableFrom(numberType)
+        || Integer   .class.isAssignableFrom(numberType)
+        || Long      .class.isAssignableFrom(numberType)
+        || byte      .class.isAssignableFrom(numberType)
+        || short     .class.isAssignableFrom(numberType)
+        || int       .class.isAssignableFrom(numberType)
+        || long      .class.isAssignableFrom(numberType)
+        || BigInteger.class.isAssignableFrom(numberType);
   }
 
   /**
    * Return true if the specified number is a areal.
    */
   public static boolean isReal(Number number) {
-    return number instanceof Float ||
-        number instanceof Double ||
-        number instanceof BigDecimal;
+    return number instanceof Float
+        || number instanceof Double
+        || number instanceof BigDecimal;
   }
 
   /**
    * Return true if the specified type is a real number.
    */
-  public static boolean isReal(Class numberType) {
-    return Float.class.isAssignableFrom(numberType) ||
-        Double.class.isAssignableFrom(numberType) ||
-        BigDecimal.class.isAssignableFrom(numberType);
+  public static boolean isReal(Class<?> numberType) {
+    return Float     .class.isAssignableFrom(numberType)
+        || Double    .class.isAssignableFrom(numberType)
+        || float     .class.isAssignableFrom(numberType)
+        || double    .class.isAssignableFrom(numberType)
+        || BigDecimal.class.isAssignableFrom(numberType);
   }
 
   /**
    * Promote the number to long.
    */
   public static Long promoteToLong(Number value) {
-    return value == null ? null :
-           value instanceof Long ? (Long) value :
-           value.longValue();
+    return value == null         ? null
+         : value instanceof Long ? (Long)value
+         : value.longValue();
   }
 
   /**
    * Promote the number to double.
    */
   public static Double promoteToDouble(Number value) {
-    return value == null ? null :
-           value instanceof Double ? (Double) value :
-           value.doubleValue();
+    return value == null           ? null
+         : value instanceof Double ? (Double)value
+         : value.doubleValue();
   }
 
   /**
-   * Converts a string representation to the longest possible number
-   * throwing NumberFormatException if not possible. Returns null if
-   * the string is null or empty.
+   * Converts a string representation to the longest possible number throwing
+   * NumberFormatException if not possible. Returns null if the string is null
+   * or empty.
    */
   public static Number convert(String number) throws NumberFormatException {
     if (number == null) {
@@ -135,23 +143,15 @@ public class Numbers {
       number = Math.round(number instanceof Double ? number.doubleValue() : number.floatValue());
     }
 
-    if (Byte.class.equals(toNumberType)) {
-      return number.byteValue();
-    } else if (Short.class.equals(toNumberType)) {
-      return number.shortValue();
-    } else if (Integer.class.equals(toNumberType)) {
-      return number.intValue();
-    } else if (Long.class.equals(toNumberType)) {
-      return number.longValue();
-    } else if (Float.class.equals(toNumberType)) {
-      return number.floatValue();
-    } else if (Double.class.equals(toNumberType)) {
-      return number.doubleValue();
-    }
+    if      (Byte   .class.equals(toNumberType))  { return number.byteValue();   }
+    else if (Short  .class.equals(toNumberType))  { return number.shortValue();  }
+    else if (Integer.class.equals(toNumberType))  { return number.intValue();    }
+    else if (Long   .class.equals(toNumberType))  { return number.longValue();   }
+    else if (Float  .class.equals(toNumberType))  { return number.floatValue();  }
+    else if (Double.class.equals(toNumberType))   { return number.doubleValue(); }
 
     throw new IllegalArgumentException("Could not convert " + number
-        + " of type " + number.getClass()
-        + " to " + toNumberType);
+        + " of type " + number.getClass() + " to " + toNumberType);
   }
 
   /**
@@ -162,8 +162,8 @@ public class Numbers {
       return number1 == number2;
     } else {
       return isIntegral(number1)
-             ? promoteToLong(number1).equals(promoteToLong(number2))
-             : promoteToDouble(number1).equals(promoteToDouble(number2));
+           ? promoteToLong(number1).equals(promoteToLong(number2))
+           : promoteToDouble(number1).equals(promoteToDouble(number2));
     }
   }
 
