@@ -175,7 +175,7 @@ public interface Literal<T> {
   class PrimitiveLiteral<T> extends NullableLiteral<T> {
     private PrimitiveLiteral(Class<T> cls) {
       wrapperClass = Classes.wrapperClassOf(cls);
-      constructor = unchecked(() -> (Constructor<T>) wrapperClass.getDeclaredConstructor(String.class));
+      constructor = unchecked(() -> (Constructor<T>)wrapperClass.getDeclaredConstructor(String.class));
     }
 
     @Override
@@ -251,7 +251,7 @@ public interface Literal<T> {
 
     @Override
     public T toValueNonNull(String repr) {
-      return unchecked(() -> (T) valueOf.invoke(null, repr));
+      return unchecked(() -> (T)valueOf.invoke(null, repr));
     }
 
     @Override
@@ -328,7 +328,7 @@ public interface Literal<T> {
 
       // put list of read items into an array to return
       int i = 0;
-      T array = (T) Array.newInstance(componentType, items.size());
+      T array = (T)Array.newInstance(componentType, items.size());
       for (Object obj : items) Array.set(array, i++, obj);
       return array;
     }
@@ -444,31 +444,31 @@ public interface Literal<T> {
     private static final Map<Class<?>, Literal<?>> register = new HashMap<>();
 
     static {
-      baseLiterals.put(Date.class, new DateLiteral());
-      baseLiterals.put(String.class, new StringLiteral());
+      baseLiterals.put(Date.class,          new DateLiteral());
+      baseLiterals.put(String.class,        new StringLiteral());
       baseLiterals.put(StringBuilder.class, new ReflectiveLiteral<>(StringBuilder.class));
-      baseLiterals.put(StringBuffer.class, new ReflectiveLiteral<>(StringBuffer.class));
+      baseLiterals.put(StringBuffer.class,  new ReflectiveLiteral<>(StringBuffer.class));
 
-      baseLiterals.put(Boolean.class, new ReflectiveLiteral<>(Boolean.class));
-      baseLiterals.put(Character.class, new CharacterLiteral());
-      baseLiterals.put(Long.class, new ReflectiveLiteral<>(Long.class));
-      baseLiterals.put(Integer.class, new ReflectiveLiteral<>(Integer.class));
-      baseLiterals.put(Short.class, new ReflectiveLiteral<>(Short.class));
-      baseLiterals.put(Byte.class, new ReflectiveLiteral<>(Byte.class));
-      baseLiterals.put(Float.class, new ReflectiveLiteral<>(Float.class));
-      baseLiterals.put(Double.class, new ReflectiveLiteral<>(Double.class));
+      baseLiterals.put(Boolean.class,       new ReflectiveLiteral<>(Boolean.class));
+      baseLiterals.put(Character.class,     new CharacterLiteral());
+      baseLiterals.put(Long.class,          new ReflectiveLiteral<>(Long.class));
+      baseLiterals.put(Integer.class,       new ReflectiveLiteral<>(Integer.class));
+      baseLiterals.put(Short.class,         new ReflectiveLiteral<>(Short.class));
+      baseLiterals.put(Byte.class,          new ReflectiveLiteral<>(Byte.class));
+      baseLiterals.put(Float.class,         new ReflectiveLiteral<>(Float.class));
+      baseLiterals.put(Double.class,        new ReflectiveLiteral<>(Double.class));
 
-      baseLiterals.put(BigInteger.class, new ReflectiveLiteral<>(BigInteger.class));
-      baseLiterals.put(BigDecimal.class, new ReflectiveLiteral<>(BigDecimal.class));
+      baseLiterals.put(BigInteger.class,    new ReflectiveLiteral<>(BigInteger.class));
+      baseLiterals.put(BigDecimal.class,    new ReflectiveLiteral<>(BigDecimal.class));
 
-      baseLiterals.put(boolean.class, new PrimitiveLiteral<>(Boolean.class));
-      baseLiterals.put(char.class, new CharacterLiteral());
-      baseLiterals.put(long.class, new PrimitiveLiteral<>(Long.class));
-      baseLiterals.put(int.class, new PrimitiveLiteral<>(Integer.class));
-      baseLiterals.put(short.class, new PrimitiveLiteral<>(Short.class));
-      baseLiterals.put(byte.class, new PrimitiveLiteral<>(Byte.class));
-      baseLiterals.put(float.class, new PrimitiveLiteral<>(Float.class));
-      baseLiterals.put(double.class, new PrimitiveLiteral<>(Double.class));
+      baseLiterals.put(boolean.class,       new PrimitiveLiteral<>(Boolean.class));
+      baseLiterals.put(char.class,          new CharacterLiteral());
+      baseLiterals.put(long.class,          new PrimitiveLiteral<>(Long.class));
+      baseLiterals.put(int.class,           new PrimitiveLiteral<>(Integer.class));
+      baseLiterals.put(short.class,         new PrimitiveLiteral<>(Short.class));
+      baseLiterals.put(byte.class,          new PrimitiveLiteral<>(Byte.class));
+      baseLiterals.put(float.class,         new PrimitiveLiteral<>(Float.class));
+      baseLiterals.put(double.class,        new PrimitiveLiteral<>(Double.class));
 
       register.putAll(baseLiterals);
     }

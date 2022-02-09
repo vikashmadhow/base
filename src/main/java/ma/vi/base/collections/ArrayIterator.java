@@ -12,6 +12,7 @@ public class ArrayIterator<E> implements Iterator<E> {
   /**
    * Creates an iterator that will iterate over the provided items
    */
+  @SafeVarargs
   public ArrayIterator(E... items) {
     this.items = items;
   }

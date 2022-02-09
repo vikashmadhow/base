@@ -13,7 +13,8 @@ import java.util.*;
  *
  * @author vikash.madhow@gmail.com
  */
-public class DiskBasedCollection<E extends Serializable> extends AbstractCollection<E> implements Serializable {
+public class DiskBasedCollection<E extends Serializable> extends AbstractCollection<E>
+                                                      implements Serializable, AutoCloseable {
   /**
    * Creates a new disk-based collection with the specified comparator.
    * All temporary files are created in the supplied temporary directory.
@@ -340,6 +341,7 @@ public class DiskBasedCollection<E extends Serializable> extends AbstractCollect
   /**
    * Closes and deletes the index and contents files.
    */
+  @Override
   public void close() {
     index.shutdown();
     contents.shutdown();
@@ -348,11 +350,11 @@ public class DiskBasedCollection<E extends Serializable> extends AbstractCollect
     contentsFile.delete();
   }
 
-  @Override
-  protected void finalize() throws Throwable {
-    super.finalize();
-    close();
-  }
+//  @Override
+//  protected void finalize() throws Throwable {
+//    super.finalize();
+//    close();
+//  }
 
   /**
    * Returns the index entry for the first object in the collection matching the

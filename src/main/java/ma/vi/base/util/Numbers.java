@@ -148,7 +148,7 @@ public class Numbers {
     else if (Integer.class.equals(toNumberType))  { return number.intValue();    }
     else if (Long   .class.equals(toNumberType))  { return number.longValue();   }
     else if (Float  .class.equals(toNumberType))  { return number.floatValue();  }
-    else if (Double.class.equals(toNumberType))   { return number.doubleValue(); }
+    else if (Double .class.equals(toNumberType))  { return number.doubleValue(); }
 
     throw new IllegalArgumentException("Could not convert " + number
         + " of type " + number.getClass() + " to " + toNumberType);

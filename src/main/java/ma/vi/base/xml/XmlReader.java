@@ -80,7 +80,7 @@ public class XmlReader implements Iterable<Fragment>, Iterator<Fragment>, AutoCl
    */
   public Fragment nextWhile(Predicate<Fragment> test) {
     Fragment de = null;
-    while (hasNext() && test.test(de = next())) ;
+    while (hasNext() && test.test(de = next()));
     return de == null || test.test(de) ? null : de;
   }
 

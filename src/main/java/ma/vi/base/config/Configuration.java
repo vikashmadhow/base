@@ -73,6 +73,7 @@ public class Configuration extends HashMap<String, Object> {
   /**
    * Create a configuration from the list of values.
    */
+  @SafeVarargs
   public static Configuration of(T2<String, Object>... values) {
     Configuration c = new Configuration();
     for (T2<String, Object> value: values) {

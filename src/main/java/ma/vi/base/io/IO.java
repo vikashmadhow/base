@@ -71,19 +71,9 @@ public class IO {
    * Copy content of in file to out file. Return number of bytes copied.
    */
   public static int transfer(File inFile, File outFile) throws IOException {
-    InputStream in = null;
-    OutputStream out = null;
-    try {
-      in = new FileInputStream(inFile);
-      out = new FileOutputStream(outFile);
+    try (InputStream in = new FileInputStream(inFile);
+         OutputStream out = new FileOutputStream(outFile)) {
       return transfer(in, out);
-    } finally {
-      if (in != null) {
-        in.close();
-      }
-      if (out != null) {
-        out.close();
-      }
     }
   }
 
@@ -91,19 +81,9 @@ public class IO {
    * Copy up to count bytes from in file to out file. Return number of bytes copied.
    */
   public static int transfer(File inFile, File outFile, int count) throws IOException {
-    InputStream in = null;
-    OutputStream out = null;
-    try {
-      in = new BoundedInputStream(new FileInputStream(inFile), count);
-      out = new FileOutputStream(outFile);
+    try (InputStream in = new BoundedInputStream(new FileInputStream(inFile), count);
+         OutputStream out = new FileOutputStream(outFile)) {
       return transfer(in, out);
-    } finally {
-      if (in != null) {
-        in.close();
-      }
-      if (out != null) {
-        out.close();
-      }
     }
   }
 
@@ -155,7 +135,7 @@ public class IO {
    */
   public static char[] readAll(Reader in) throws IOException {
     String str = readAllAsString(in);
-    char chr[] = new char[str.length()];
+    char[] chr = new char[str.length()];
     str.getChars(0, str.length(), chr, 0);
     return chr;
   }

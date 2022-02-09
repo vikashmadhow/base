@@ -5,10 +5,7 @@
 package ma.vi.base.tuple;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Interface of all tuples.
@@ -57,7 +54,7 @@ public interface Tuple extends Iterable<Object>, Serializable, Cloneable {
     if (tuples != null) {
       for (T tuple : tuples) {
         Object value = tuple.get(elementIndexInTuple);
-        if (value == null ? element == null : value.equals(element)) {
+        if (Objects.equals(value, element)) {
           return tuple;
         }
       }
@@ -75,7 +72,7 @@ public interface Tuple extends Iterable<Object>, Serializable, Cloneable {
       for (Iterator<T> i = tuples.iterator(); i.hasNext(); ) {
         T t = i.next();
         Object value = t.get(elementIndexInTuple);
-        if (value == null ? element == null : value.equals(element)) {
+        if (Objects.equals(value, element)) {
           i.remove();
           removed++;
         }

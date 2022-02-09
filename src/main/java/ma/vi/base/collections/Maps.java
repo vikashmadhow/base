@@ -4,7 +4,6 @@
 
 package ma.vi.base.collections;
 
-import ma.vi.base.lang.Errors;
 import ma.vi.base.tuple.T2;
 
 import java.util.HashMap;

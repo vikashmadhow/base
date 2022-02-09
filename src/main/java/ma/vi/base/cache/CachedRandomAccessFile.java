@@ -53,7 +53,7 @@ public class CachedRandomAccessFile<E extends Serializable> implements AutoClose
         E value;
         synchronized (file) {
           file.seek(position);
-          value = (E) new ObjectInputStream(new DataInputStream(Channels.newInputStream(file.getChannel()))).readObject();
+          value = (E)new ObjectInputStream(new DataInputStream(Channels.newInputStream(file.getChannel()))).readObject();
         }
         record = new Record<>(value, position);
 
@@ -221,12 +221,12 @@ public class CachedRandomAccessFile<E extends Serializable> implements AutoClose
     private void write(List<Record<E>> records) throws IOException {
       if (!records.isEmpty()) {
         List<Record<E>> recordsToWrite = records.size() > 1 ? coalesce(records) : records;
-        for (Record<E> record : recordsToWrite) {
+        for (Record<E> record: recordsToWrite) {
           write(record);
         }
 
         // flag records as written
-        for (Record<E> record : records) {
+        for (Record<E> record: records) {
           record.unwritten = false;
         }
       }
@@ -252,7 +252,7 @@ public class CachedRandomAccessFile<E extends Serializable> implements AutoClose
     public void cleanCache() {
       // remove all records with usage count < minUsageCountToKeep
       int oldCacheSize = cache.size();
-      for (Record<E> record : cache.values()) {
+      for (Record<E> record: cache.values()) {
         if (!record.unwritten && record.usageCount < minUsageCountToKeep) {
           synchronized (cache) {
             // double-check is required since changes might have occurred
@@ -282,7 +282,7 @@ public class CachedRandomAccessFile<E extends Serializable> implements AutoClose
       records.sort(Comparator.comparingLong(Record::position));
 
       Record<E> lastRecord = null;
-      for (Record<E> record : records) {
+      for (Record<E> record: records) {
         if (lastRecord == null) {
           lastRecord = record;
           coalesced.add(record);

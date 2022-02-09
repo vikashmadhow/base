@@ -89,5 +89,5 @@ public class SpyInputStream extends FilterInputStream {
   /**
    * Target output stream to send spied bytes to.
    */
-  private OutputStream target;
+  private final OutputStream target;
 }

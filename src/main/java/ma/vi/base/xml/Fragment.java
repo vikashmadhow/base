@@ -36,13 +36,13 @@ public class Fragment {
    * The type of fragment.
    */
   public enum Type {
-    T_START_DOCUMENT(START_DOCUMENT, "Start document"),
-    T_END_DOCUMENT(END_DOCUMENT, "End document"),
-    T_START_ELEMENT(START_ELEMENT, "Start element"),
-    T_END_ELEMENT(END_ELEMENT, "End element"),
-    T_PROCESSING_INSTRUCTION(PROCESSING_INSTRUCTION, "Processing instruction"),
-    T_COMMENT(COMMENT, "Comment"),
-    T_TEXT(CHARACTERS, "Text");
+    T_START_DOCUMENT         (START_DOCUMENT,         "Start document"),
+    T_END_DOCUMENT           (END_DOCUMENT,           "End document"),
+    T_START_ELEMENT          (START_ELEMENT,          "Start element"),
+    T_END_ELEMENT            (END_ELEMENT,            "End element"),
+    T_PROCESSING_INSTRUCTION (PROCESSING_INSTRUCTION, "Processing instruction"),
+    T_COMMENT                (COMMENT,                "Comment"),
+    T_TEXT                   (CHARACTERS,             "Text");
 
     public final int code;
     public final String name;
@@ -58,13 +58,13 @@ public class Fragment {
      */
     public static Type of(int code) {
       return switch (code) {
-        case START_DOCUMENT -> T_START_DOCUMENT;
-        case END_DOCUMENT -> T_END_DOCUMENT;
-        case START_ELEMENT -> T_START_ELEMENT;
-        case END_ELEMENT -> T_END_ELEMENT;
-        case PROCESSING_INSTRUCTION -> T_PROCESSING_INSTRUCTION;
-        case COMMENT -> T_COMMENT;
-        case CHARACTERS, SPACE, CDATA -> T_TEXT;
+        case START_DOCUMENT             -> T_START_DOCUMENT;
+        case END_DOCUMENT               -> T_END_DOCUMENT;
+        case START_ELEMENT              -> T_START_ELEMENT;
+        case END_ELEMENT                -> T_END_ELEMENT;
+        case PROCESSING_INSTRUCTION     -> T_PROCESSING_INSTRUCTION;
+        case COMMENT                    -> T_COMMENT;
+        case CHARACTERS , SPACE, CDATA  -> T_TEXT;
         default -> throw new IllegalArgumentException("Unknown or unsupported XML tag code: " + code);
       };
     }

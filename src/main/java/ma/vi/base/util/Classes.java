@@ -56,14 +56,14 @@ public class Classes {
    */
   public static boolean isLiteral(Object type) {
     if (type != null) {
-      Class cls = type instanceof Class ? (Class) type : type.getClass();
-      return cls.isPrimitive() ||
-          cls.isEnum() ||
-          CharSequence.class.isAssignableFrom(cls) ||
-          Number.class.isAssignableFrom(cls) ||
-          Boolean.class.isAssignableFrom(cls) ||
-          Character.class.isAssignableFrom(cls) ||
-          Date.class.isAssignableFrom(cls);
+      Class<?> cls = type instanceof Class ? (Class<?>) type : type.getClass();
+      return cls.isPrimitive()
+          || cls.isEnum()
+          || CharSequence.class.isAssignableFrom(cls)
+          || Number.class.isAssignableFrom(cls)
+          || Boolean.class.isAssignableFrom(cls)
+          || Character.class.isAssignableFrom(cls)
+          || Date.class.isAssignableFrom(cls);
     }
     return false;
   }

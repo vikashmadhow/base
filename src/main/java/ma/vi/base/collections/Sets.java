@@ -17,6 +17,7 @@ public class Sets {
   /**
    * Create a hashset from the values.
    */
+  @SafeVarargs
   public static <T> Set<T> of(T... values) {
     return new HashSet<T>(Arrays.asList(values));
   }
@@ -35,8 +36,7 @@ public class Sets {
    * Returns a new set formed by the intersection of the two supplied sets.
    */
   public static <T> Set<T> intersect(Set<? extends T> s1, Set<? extends T> s2) {
-    Set<T> set = new HashSet<>();
-    set.addAll(s1);
+    Set<T> set = new HashSet<>(s1);
     set.retainAll(s2);
     return set;
   }
@@ -45,8 +45,7 @@ public class Sets {
    * Returns a new set formed as the difference s1 - s2.
    */
   public static <T> Set<T> minus(Set<? extends T> s1, Set<? extends T> s2) {
-    Set<T> set = new HashSet<>();
-    set.addAll(s1);
+    Set<T> set = new HashSet<>(s1);
     set.removeAll(s2);
     return set;
   }
