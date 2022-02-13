@@ -71,6 +71,13 @@ public class Configuration extends HashMap<String, Object> {
   }
 
   /**
+   * Creates a configuration from the map.
+   */
+  public Configuration(Map<String, Object> config) {
+    putAll(config);
+  }
+
+  /**
    * Create a configuration from the list of values.
    */
   @SafeVarargs
@@ -82,6 +89,114 @@ public class Configuration extends HashMap<String, Object> {
     return c;
   }
 
+  public static Configuration of(String k1, Object v1) {
+    return new Configuration(Map.of(k1, v1));
+  }
+
+  public static Configuration of(String k1, Object v1,
+                                 String k2, Object v2) {
+    return new Configuration(Map.of(k1, v1,
+                                    k2, v2));
+  }
+
+  public static Configuration of(String k1, Object v1,
+                                 String k2, Object v2,
+                                 String k3, Object v3) {
+    return new Configuration(Map.of(k1, v1,
+                                    k2, v2,
+                                    k3, v3));
+  }
+
+  public static Configuration of(String k1, Object v1,
+                                 String k2, Object v2,
+                                 String k3, Object v3,
+                                 String k4, Object v4) {
+    return new Configuration(Map.of(k1, v1,
+                                    k2, v2,
+                                    k3, v3,
+                                    k4, v4));
+  }
+
+  public static Configuration of(String k1, Object v1,
+                                 String k2, Object v2,
+                                 String k3, Object v3,
+                                 String k4, Object v4,
+                                 String k5, Object v5) {
+    return new Configuration(Map.of(k1, v1,
+                                    k2, v2,
+                                    k3, v3,
+                                    k4, v4,
+                                    k5, v5));
+  }
+
+  public static Configuration of(String k1, Object v1,
+                                 String k2, Object v2,
+                                 String k3, Object v3,
+                                 String k4, Object v4,
+                                 String k5, Object v5,
+                                 String k6, Object v6) {
+    return new Configuration(Map.of(k1, v1,
+                                    k2, v2,
+                                    k3, v3,
+                                    k4, v4,
+                                    k5, v5,
+                                    k6, v6));
+  }
+
+  public static Configuration of(String k1, Object v1,
+                                 String k2, Object v2,
+                                 String k3, Object v3,
+                                 String k4, Object v4,
+                                 String k5, Object v5,
+                                 String k6, Object v6,
+                                 String k7, Object v7) {
+    return new Configuration(Map.of(k1, v1,
+                                    k2, v2,
+                                    k3, v3,
+                                    k4, v4,
+                                    k5, v5,
+                                    k6, v6,
+                                    k7, v7));
+  }
+
+  public static Configuration of(String k1, Object v1,
+                                 String k2, Object v2,
+                                 String k3, Object v3,
+                                 String k4, Object v4,
+                                 String k5, Object v5,
+                                 String k6, Object v6,
+                                 String k7, Object v7,
+                                 String k8, Object v8) {
+    return new Configuration(Map.of(k1, v1,
+                                    k2, v2,
+                                    k3, v3,
+                                    k4, v4,
+                                    k5, v5,
+                                    k6, v6,
+                                    k7, v7,
+                                    k8, v8));
+  }
+
+  public static Configuration of(String k1, Object v1,
+                                 String k2, Object v2,
+                                 String k3, Object v3,
+                                 String k4, Object v4,
+                                 String k5, Object v5,
+                                 String k6, Object v6,
+                                 String k7, Object v7,
+                                 String k8, Object v8,
+                                 String k9, Object v9) {
+    return new Configuration(Map.of(k1, v1,
+                                    k2, v2,
+                                    k3, v3,
+                                    k4, v4,
+                                    k5, v5,
+                                    k6, v6,
+                                    k7, v7,
+                                    k8, v8,
+                                    k9, v9));
+  }
+
   /**
    * Creates a new configuration from this configuration and adds all elements
    * from the supplied config, replacing values for any existing keys.
@@ -90,6 +205,18 @@ public class Configuration extends HashMap<String, Object> {
     Configuration config = new Configuration(this);
     config.putAll(newConfig);
     return config;
+  }
+
+  public <X> X param(Object key) {
+    return (X)get(key);
+  }
+
+  public <X> X param(Object key, X defaultValue) {
+    if (containsKey(key)) {
+      return (X)get(key);
+    } else {
+      return defaultValue;
+    }
   }
 
   private void read(Map<String, Object> config, boolean unobfuscatePasswords, String prefix) {

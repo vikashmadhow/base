@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.6] - 2022-02-11
+### Added
+- Configuration can now be built from a map of string to object.
+- Configuration.param method returns the parameter value casting to the expected 
+  type, returning a default value if the parameter does not exist in the configuration.
+
 ## [0.3.5] - 2022-02-09
 ### Cleaned up
 - Various reformatting, removing obsolete methods and misc cleanups

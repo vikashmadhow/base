@@ -10,7 +10,6 @@
 
 buildscript {
   repositories {
-    jcenter()
     mavenCentral()
   }
 }
@@ -25,7 +24,6 @@ plugins {
 repositories {
   mavenLocal()
   mavenCentral()
-  jcenter()
 }
 
 // java {
@@ -73,7 +71,7 @@ test {
 group = 'ma.vi'
 archivesBaseName = 'base'
 sourceCompatibility = JavaVersion.VERSION_14
-version = "0.3.5"
+version = "0.3.6"
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 java {
@@ -99,7 +97,7 @@ publishing {
     mavenJava(MavenPublication) {
       from components.java
       pom {
-        groupId = 'com.vikmad'
+        groupId = 'ma.vi'
         artifactId = 'base'
         name = "Base algos and utils"
         description = 'Base algos, data structures and utilities'
