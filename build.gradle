@@ -69,9 +69,8 @@ test {
 }
 
 group = 'ma.vi'
-archivesBaseName = 'base'
-sourceCompatibility = JavaVersion.VERSION_14
-version = "0.3.6"
+sourceCompatibility = JavaVersion.VERSION_17
+version = "0.4.0"
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 java {

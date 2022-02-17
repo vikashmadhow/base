@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ import static ma.vi.base.lang.Errors.unchecked;
  *
  * @author Vikash Madhow (vikash.madhow@gmail.com)
  */
-public class Configuration extends HashMap<String, Object> {
+public class Configuration {
 
   /**
    * Read configuration from a YAML file producing a map of string to objects.
@@ -58,6 +59,7 @@ public class Configuration extends HashMap<String, Object> {
    * data from the supplied reader.
    */
   public Configuration(Reader in, boolean unobfuscatePasswords) {
+    this.configuration = new HashMap<>();
     Yaml yaml = new Yaml();
     read(yaml.load(in), unobfuscatePasswords, "");
     unchecked(in::close);
@@ -67,14 +69,14 @@ public class Configuration extends HashMap<String, Object> {
    * Creates a copy of the supplied configuration.
    */
   public Configuration(Configuration config) {
-    putAll(config);
+    this(new HashMap<>(config.configuration));
   }
 
   /**
    * Creates a configuration from the map.
    */
   public Configuration(Map<String, Object> config) {
-    putAll(config);
+    this.configuration = config;
   }
 
   /**
@@ -82,7 +84,7 @@ public class Configuration extends HashMap<String, Object> {
    */
   @SafeVarargs
   public static Configuration of(T2<String, Object>... values) {
-    Configuration c = new Configuration();
+    Configuration c = new Configuration(new HashMap<>());
     for (T2<String, Object> value: values) {
       c.put(value.a(), value.b());
     }
@@ -207,20 +209,38 @@ public class Configuration extends HashMap<String, Object> {
     return config;
   }
 
-  public <X> X param(Object key) {
-    return (X)get(key);
+  public <X> X get(String key) {
+    return (X)configuration.get(key);
   }
 
-  public <X> X param(Object key, X defaultValue) {
-    if (containsKey(key)) {
-      return (X)get(key);
+  public <X> X get(String key, X defaultValue) {
+    if (configuration.containsKey(key)) {
+      return (X)configuration.get(key);
     } else {
       return defaultValue;
     }
   }
 
-  private void read(Map<String, Object> config, boolean unobfuscatePasswords, String prefix) {
-    for(Map.Entry<String, Object> e: config.entrySet()) {
+  public boolean has(String key) {
+    return configuration.containsKey(key);
+  }
+
+  public void put(String key, Object value) {
+    configuration.put(key, value);
+  }
+
+  public void putAll(Map<String, Object> values) {
+    configuration.putAll(values);
+  }
+
+  public Map<String, Object> asMap() {
+    return Collections.unmodifiableMap(configuration);
+  }
+
+  private void read(Map<String, Object> values,
+                    boolean             unobfuscatePasswords,
+                    String              prefix) {
+    for (Map.Entry<String, Object> e: values.entrySet()) {
       String key = e.getKey();
       Object value = e.getValue();
       if (value instanceof Map) {
@@ -234,12 +254,12 @@ public class Configuration extends HashMap<String, Object> {
             value = Obfuscator.unobfuscate(value.toString());
           }
         }
-        put(prefix + key, value);
+        this.configuration.put(prefix + key, value);
       }
     }
   }
 
-  private Configuration() {}
+  public static final Configuration EMPTY = new Configuration(Collections.emptyMap());
 
-  public static final Configuration EMPTY = new Configuration();
+  private final Map<String, Object> configuration;
 }

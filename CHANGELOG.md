@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2022-02-17
+### Added
+- Configuration now encapsulates its map of values instead of inheriting from 
+  HashMap. As such it has better control over what clients can do with the 
+  underlying map values. Further, specific map implementations can be provided
+  on construction (e.g. readonly maps, concurrent, etc.) and the configuration
+  will inherit their properties.
+- `has` method tests existence of parameter in `Configuration`. 
+- Move to Java 17.
+
 ## [0.3.6] - 2022-02-11
 ### Added
 - Configuration can now be built from a map of string to object.
