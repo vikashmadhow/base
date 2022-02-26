@@ -147,7 +147,7 @@ public class Dissector {
          * Add properties based on getters and setters
          */
         Map<MethodDescriptor, Method> methods = methods(cls);
-        for (Map.Entry<MethodDescriptor, Method> entry : methods.entrySet()) {
+        for (Map.Entry<MethodDescriptor, Method> entry: methods.entrySet()) {
           MethodDescriptor desc = entry.getKey();
 
           Method method = entry.getValue();
@@ -197,7 +197,7 @@ public class Dissector {
           if (!properties.containsKey(propertyName)) {
             Field field = entry.getValue();
             int mod = field.getModifiers();
-            if (!Modifier.isStatic(mod) && !Modifier.isFinal(mod)) {
+            if (!Modifier.isStatic(mod)) {
               properties.put(propertyName, new Property(field));
             }
           }

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `isReadable` and `isWritable` methods added to dissector `Property`.
 - Dissection of Java records into properties.
+- Final fields are now allowed as properties.
 
 ## [0.4.0] - 2022-02-17
 ### Added
