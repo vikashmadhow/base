@@ -19,12 +19,14 @@ public class Property {
   Property(Field field) {
     checkArgument(field != null, "Field must not be null");
     this.field = field;
+    this.name = field.getName();
     this.getter = this.setter = null;
   }
 
-  Property(Method getter, Method setter) {
+  Property(String name, Method getter, Method setter) {
     checkArgument(getter != null || setter != null, "Both getter and setter cannot be null");
     this.field = null;
+    this.name = name;
     this.getter = getter;
     this.setter = setter;
   }
@@ -36,12 +38,7 @@ public class Property {
   }
 
   public String name() {
-    if (field != null) {
-      return field.getName();
-
-    } else {
-      return propertyNameFromMethod(getter != null ? getter.getName() : setter.getName());
-    }
+    return name;
   }
 
   public Object get(Object object) {
@@ -56,6 +53,14 @@ public class Property {
     } else {
       unchecked(() -> setter.invoke(object, value));
     }
+  }
+
+  public boolean isReadable() {
+    return getter != null;
+  }
+
+  public boolean isWritable() {
+    return getter != null;
   }
 
   public static String propertyNameFromMethod(String methodName) {
@@ -79,8 +84,8 @@ public class Property {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    Property property = (Property) o;
-
+    Property property = (Property)o;
+    if (!Objects.equals(name, property.name)) return false;
     if (!Objects.equals(field, property.field)) return false;
     if (!Objects.equals(getter, property.getter)) return false;
     return Objects.equals(setter, property.setter);
@@ -89,11 +94,13 @@ public class Property {
   @Override
   public int hashCode() {
     int result = field != null ? field.hashCode() : 0;
+    result = 31 * result + name.hashCode();
     result = 31 * result + (getter != null ? getter.hashCode() : 0);
     result = 31 * result + (setter != null ? setter.hashCode() : 0);
     return result;
   }
 
+  private final String name;
   private final Field field;
   private final Method getter;
   private final Method setter;

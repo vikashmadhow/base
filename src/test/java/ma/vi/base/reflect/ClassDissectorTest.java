@@ -59,7 +59,7 @@ public class ClassDissectorTest {
     private Object g;
   }
 
-  static interface B {
+  interface B {
     void a();
 
     void d();
@@ -113,6 +113,8 @@ public class ClassDissectorTest {
     protected String i;
     private Object j;
   }
+
+  static record E(String a, int b) {}
 
   static Map<MethodDescriptor, Method> objectMethods;
 
@@ -232,5 +234,14 @@ public class ClassDissectorTest {
         componentClasses(C.class),
         Arrays.asList(C.class, B.class, A.class, Object.class)
     );
+  }
+
+  @Test
+  public void dissectE() {
+    Map<String, Property> props = Dissector.properties(E.class);
+    assertEquals(props.keySet(), Set.of("a", "b"));
+    E e = new E("One", 1);
+    assertEquals(props.get("a").get(e), "One");
+    assertEquals(props.get("b").get(e), 1);
   }
 }

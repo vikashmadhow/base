@@ -4,10 +4,7 @@
 
 package ma.vi.base.reflect;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -141,60 +138,68 @@ public class Dissector {
     return propertiesCache.computeIfAbsent(cls, k -> {
       Map<String, Property> properties = new HashMap<>();
 
-      // Add properties based on getters and setters
-      Map<MethodDescriptor, Method> methods = methods(cls);
-      for (Map.Entry<MethodDescriptor, Method> entry : methods.entrySet()) {
-        MethodDescriptor desc = entry.getKey();
+      if (cls.isRecord()) {
+        for (RecordComponent c: cls.getRecordComponents()) {
+          properties.put(c.getName(), new Property(c.getName(), c.getAccessor(), null));
+        }
+      } else {
+        /*
+         * Add properties based on getters and setters
+         */
+        Map<MethodDescriptor, Method> methods = methods(cls);
+        for (Map.Entry<MethodDescriptor, Method> entry : methods.entrySet()) {
+          MethodDescriptor desc = entry.getKey();
 
-        Method method = entry.getValue();
-        String methodName = method.getName();
-        String propertyName = Property.propertyNameFromMethod(methodName);
-        if (!properties.containsKey(propertyName)) {
-          int mod = method.getModifiers();
-          if (!Modifier.isStatic(mod)
-              && !Modifier.isAbstract(mod)
-              && Modifier.isPublic(mod)
-              && (methodName.startsWith("is")
-              || methodName.startsWith("get")
-              || methodName.startsWith("set"))) {
+          Method method = entry.getValue();
+          String methodName = method.getName();
+          String propertyName = Property.propertyNameFromMethod(methodName);
+          if (!properties.containsKey(propertyName)) {
+            int mod = method.getModifiers();
+            if (!Modifier.isStatic(mod)
+             && !Modifier.isAbstract(mod)
+             && Modifier.isPublic(mod)
+             && (methodName.startsWith("is")
+             || methodName.startsWith("get")
+             || methodName.startsWith("set"))) {
 
-            if (desc.parameterTypes.length == 0
-                && (methodName.startsWith("is")
+              if (desc.parameterTypes.length == 0
+               && (methodName.startsWith("is")
                 || methodName.startsWith("get"))) {
 
-              Class<?> type = method.getReturnType();
-              Method setter = methods.get(new MethodDescriptor("set" + capFirst(propertyName), type));
-              if (setter != null && !setter.getReturnType().equals(void.class)) {
-                setter = null;
-              }
-              properties.put(propertyName, new Property(method, setter));
+                Class<?> type = method.getReturnType();
+                Method setter = methods.get(new MethodDescriptor("set" + capFirst(propertyName), type));
+                if (setter != null && !setter.getReturnType().equals(void.class)) {
+                  setter = null;
+                }
+                properties.put(propertyName, new Property(propertyName, method, setter));
 
-            } else if (desc.parameterTypes.length == 1
-                && desc.name.startsWith("set")) {
+              } else if (desc.parameterTypes.length == 1
+                      && desc.name.startsWith("set")) {
 
-              Class<?> type = desc.parameterTypes[0];
-              Method getter = methods.get(new MethodDescriptor("get" + capFirst(propertyName)));
-              if (getter == null) {
-                getter = methods.get(new MethodDescriptor("is" + capFirst(propertyName)));
+                Class<?> type = desc.parameterTypes[0];
+                Method getter = methods.get(new MethodDescriptor("get" + capFirst(propertyName)));
+                if (getter == null) {
+                  getter = methods.get(new MethodDescriptor("is" + capFirst(propertyName)));
+                }
+                if (getter != null && !getter.getReturnType().equals(type)) {
+                  getter = null;
+                }
+                properties.put(propertyName, new Property(propertyName, getter, method));
               }
-              if (getter != null && !getter.getReturnType().equals(type)) {
-                getter = null;
-              }
-              properties.put(propertyName, new Property(getter, method));
             }
           }
         }
-      }
 
-      // Add properties based on fields
-      Map<String, Field> fields = fields(cls);
-      for (Map.Entry<String, Field> entry : fields.entrySet()) {
-        String propertyName = entry.getKey();
-        if (!properties.containsKey(propertyName)) {
-          Field field = entry.getValue();
-          int mod = field.getModifiers();
-          if (!Modifier.isStatic(mod) && !Modifier.isFinal(mod)) {
-            properties.put(propertyName, new Property(field));
+        // Add properties based on fields
+        Map<String, Field> fields = fields(cls);
+        for (Map.Entry<String, Field> entry: fields.entrySet()) {
+          String propertyName = entry.getKey();
+          if (!properties.containsKey(propertyName)) {
+            Field field = entry.getValue();
+            int mod = field.getModifiers();
+            if (!Modifier.isStatic(mod) && !Modifier.isFinal(mod)) {
+              properties.put(propertyName, new Property(field));
+            }
           }
         }
       }
