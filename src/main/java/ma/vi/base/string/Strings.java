@@ -85,8 +85,8 @@ public class Strings {
               return false;
             }
           } else if (!(c >= '0' && c <= '9')
-              && !(c >= 'A' && c <= 'F')
-              && !(c >= 'a' && c <= 'f')) {
+                  && !(c >= 'A' && c <= 'F')
+                  && !(c >= 'a' && c <= 'f')) {
             return false;
           }
         }
@@ -236,7 +236,6 @@ public class Strings {
     if (value == null) {
       return null;
     }
-
     StringBuilder buf = new StringBuilder();
     value = Normalizer.normalize(value, Normalizer.Form.NFD);
     for (char c : value.toCharArray()) {
@@ -260,7 +259,6 @@ public class Strings {
     if (text == null || preservePattern == null) {
       return null;
     }
-
     StringBuilder result = new StringBuilder();
     Matcher matcher = preservePattern.matcher(text);
     while (matcher.find()) {
@@ -346,25 +344,16 @@ public class Strings {
     return random(length, null);
   }
 
-//    public static String makeUnique(Set<String> existing, String prefix) {
-//        String p = prefix;
-//        while (existing.contains(p)) {
-//            p = prefix + '_' + random(4);
-//        }
-//        existing.add(p);
-//        return p;
-//    }
-
   /**
-   * Change a name by adding a random substring until it is unique
-   * within the set of names provided. If the name has an optional
-   * suffix following a period (i.e. an extension), the random string
-   * is added before the extension. If the name is not present in
-   * the set of names initially, it is returned unchanged. The unique
-   * unique name is added to the set before returning.
+   * Change a name by adding a random substring until it is unique within the set
+   * of names provided. If the name has an optional suffix following a period
+   * (i.e. an extension), the random string is added before the extension. If the
+   * name is not present in the set of names initially, it is returned unchanged.
+   * The unique name is added to the set before returning if `addToNames` is true.
    *
    * @param names Set of existing names.
    * @param name  Name to make unique.
+   * @param addToNames Whether to add the new name to the set of names or not.
    * @return A unique name as per the set of names.
    */
   public static String makeUnique(Set<String> names, String name, boolean addToNames) {
@@ -384,8 +373,39 @@ public class Strings {
     return makeUnique(names, name, true);
   }
 
-  private Strings() {
+  /**
+   * Change a name by adding an incrementing index starting at 1 until it is unique
+   * within the set of names provided. If the name has an optional suffix following
+   * a period (i.e. an extension), the random string is added before the extension.
+   * If the name is not present in the set of names initially, it is returned
+   * unchanged. The unique name is added to the set before returning if `addToNames`
+   * is true.
+   *
+   * @param names Set of existing names.
+   * @param name  Name to make unique.
+   * @param addToNames Whether to add the new name to the set of names or not.
+   * @return A unique name as per the set of names.
+   */
+  public static String makeUniqueSeq(Set<String> names, String name, boolean addToNames) {
+    int pos = name.lastIndexOf('.');
+    String previousExt = pos == -1 ? "" : name.substring(pos);
+    String previousName = pos == -1 ? name : name.substring(0, pos);
+    int index = 1;
+    while (names.contains(name)) {
+      name = previousName + index + previousExt;
+      index += 1;
+    }
+    if (addToNames) {
+      names.add(name);
+    }
+    return name;
   }
+
+  public static String makeUniqueSeq(Set<String> names, String name) {
+    return makeUnique(names, name, true);
+  }
+
+  private Strings() {}
 
   /**
    * Alpha-numeric characters; useful to generate random alpha-numeric strings.

@@ -8,6 +8,7 @@ module ma.vi.base {
   requires org.yaml.snakeyaml;
   requires org.codehaus.stax2;
   requires org.apache.commons.lang3;
+  requires org.bouncycastle.provider;
 
   exports ma.vi.base.cache;
   exports ma.vi.base.circular;
