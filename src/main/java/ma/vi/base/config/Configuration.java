@@ -233,6 +233,10 @@ public class Configuration {
     configuration.putAll(values);
   }
 
+  public void remove(String key) {
+    configuration.remove(key);
+  }
+
   public Map<String, Object> asMap() {
     return Collections.unmodifiableMap(configuration);
   }
