@@ -18,7 +18,7 @@ public class Hashing {
     try {
       MessageDigest md = MessageDigest.getInstance("SHA-256");
       byte[] hashInBytes = md.digest(text.getBytes(UTF_8));
-      return (toHex(hashInBytes));
+      return toHex(hashInBytes);
     } catch (Exception e) {
       throw unchecked(e);
     }
@@ -26,8 +26,9 @@ public class Hashing {
 
   public static String toHex(byte[] bytes) {
     StringBuilder sb = new StringBuilder();
-    for (byte b : bytes) {
-      sb.append(toHexString(b & 0xff));
+    for (byte b: bytes) {
+      String hex = toHexString(b & 0xff);
+      sb.append(hex.length() == 1 ? "0" : "").append(hex);
     }
     return sb.toString();
   }
