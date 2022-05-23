@@ -29,11 +29,11 @@ public class Convert {
    * commonly in regular expressions (such as *).
    */
   public static boolean couldBeRegex(String text) {
-    return text.indexOf('*') != -1 || text.indexOf('+') != -1 ||
-        text.indexOf('|') != -1 || text.indexOf('?') != -1 ||
-        text.indexOf('[') != -1 || text.indexOf(']') != -1 ||
-        text.indexOf('\\') != -1 || text.indexOf('$') != -1 ||
-        text.indexOf('^') != -1;
+    return text.indexOf('*')  != -1 || text.indexOf('+') != -1 ||
+           text.indexOf('|')  != -1 || text.indexOf('?') != -1 ||
+           text.indexOf('[')  != -1 || text.indexOf(']') != -1 ||
+           text.indexOf('\\') != -1 || text.indexOf('$') != -1 ||
+           text.indexOf('^')  != -1;
   }
 
   /**
@@ -44,11 +44,7 @@ public class Convert {
       return null;
     } else {
       Format formatter = defaultFormatter(value.getClass());
-      if (formatter != null) {
-        return formatter.format(value);
-      } else {
-        return value.toString();
-      }
+      return formatter != null ? formatter.format(value) : value.toString();
     }
   }
 
@@ -57,26 +53,15 @@ public class Convert {
    * formatter found.
    */
   public static Format defaultFormatter(Class<?> type) {
-    if (Date.class.isAssignableFrom(type)) {
-      return DATE_FORMATTER;
-    } else if (Number.class.isAssignableFrom(type)) {
-      if (Numbers.isIntegral(type)) {
-        return INTEGER_FORMATTER;
-      } else {
-        return DECIMAL_FORMATTER;
-      }
-    }
-    return null;
+    return Date  .class.isAssignableFrom(type) ? DATE_FORMATTER
+         : Number.class.isAssignableFrom(type) ? (Numbers.isIntegral(type) ? INTEGER_FORMATTER : DECIMAL_FORMATTER)
+         : null;
   }
 
   public static Object convert(Object value, Class<?> type) {
-    if (value == null) {
-      return null;
-    } else if (type.isAssignableFrom(value.getClass())) {
-      return value;
-    } else {
-      return convert(String.valueOf(value), type);
-    }
+    return value == null                           ? null
+         : type.isAssignableFrom(value.getClass()) ? value
+         : convert(String.valueOf(value), type);
   }
 
   /**
@@ -87,7 +72,7 @@ public class Convert {
       if (Number.class.isAssignableFrom(type)) {
         if (Numbers.isIntegral(type)) {
           /*
-           * remove fractional part which will be ignored
+           * Remove fractional part which will be ignored.
            */
           int pos = text.indexOf('.');
           if (pos != -1) {
@@ -124,41 +109,46 @@ public class Convert {
     if (type == null || type.equals("variable")) {
       return value;
     } else if (type.equals("bool")) {
+
       if (value == null) {
         return null;
-      } else if (value instanceof String) {
-        String v = ((String)value).trim().toLowerCase();
-        return v.startsWith("t") || v.startsWith("y");
-      } else if (value instanceof Number) {
-        return ((Number) value).intValue() != 0;
+      } else if (value instanceof String s) {
+        String v = s.trim().toLowerCase();
+        return v.equals("1") || v.startsWith("t") || v.startsWith("y");
+      } else if (value instanceof Number n) {
+        return n.intValue() != 0;
       } else {
         return true;
       }
+
     } else if (type.startsWith("date")) {
-      if (value instanceof Number) {
-        return new Date(((Number)value).longValue());
-      } else if (value instanceof String) {
-        return convertDate((String) value);
-      } else {
-        return value;
-      }
-    } else if (value instanceof String) {
-      if (type.equals("byte")
-       || type.equals("short")
-       || type.equals("int")
-       || type.equals("long")
-       || type.equals("float")
-       || type.equals("double")) {
-        return Numbers.convert((String) value);
-      } else {
-        return value;
-      }
+      return value instanceof Number n ? new Date(n.longValue())
+           : value instanceof String s ? convertDate(s)
+           : value;
+
+    } else if (value instanceof String s) {
+      return switch(type) {
+        case "byte"   -> Byte   .valueOf(s);
+        case "short"  -> Short  .valueOf(s);
+        case "int"    -> Integer.valueOf(s);
+        case "long"   -> Long   .valueOf(s);
+        case "float"  -> Float  .valueOf(s);
+        case "double" -> Double .valueOf(s);
+        default       -> s;
+      };
+//      if (type.equals("byte")
+//       || type.equals("short")
+//       || type.equals("int")
+//       || type.equals("long")
+//       || type.equals("float")
+//       || type.equals("double")) {
+//        return Numbers.convert(s);
+//      } else {
+//        return value;
+//      }
     } else if (type.equals("string")) {
-      if (value == null) {
-        return null;
-      } else {
-        return value.toString();
-      }
+      return  value == null ? null : value.toString();
+
     } else {
       return value;
     }

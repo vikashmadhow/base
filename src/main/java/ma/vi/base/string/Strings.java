@@ -402,7 +402,7 @@ public class Strings {
   }
 
   public static String makeUniqueSeq(Set<String> names, String name) {
-    return makeUnique(names, name, true);
+    return makeUniqueSeq(names, name, true);
   }
 
   private Strings() {}
