@@ -4,6 +4,7 @@ import ma.vi.base.tuple.T2;
 
 import java.util.*;
 
+import static java.util.Collections.emptyIterator;
 import static java.util.Collections.emptyList;
 
 /**
@@ -70,10 +71,20 @@ public class Trie<U, V> {
     return node.children.isEmpty();
   }
 
+  public void clear() {
+    deletePrefixed(emptyIterator());
+  }
+
   public boolean deletePrefixed(Iterable<U> sequence) {
-    Node<U, V> node = find(sequence.iterator());
+    return deletePrefixed(sequence.iterator());
+  }
+
+  public boolean deletePrefixed(Iterator<U> sequence) {
+    Node<U, V> node = find(sequence);
     if (node != null) {
+      boolean notEmpty = !node.children.isEmpty();
       node.children.clear();
+      return notEmpty;
     }
     return false;
   }
