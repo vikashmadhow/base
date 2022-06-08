@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,7 +70,10 @@ public class Convert {
    */
   public static Object convert(String text, Class<?> type) {
     try {
-      if (Number.class.isAssignableFrom(type)) {
+      if (text == null) {
+        return null;
+
+      } else if (Number.class.isAssignableFrom(type)) {
         if (Numbers.isIntegral(type)) {
           /*
            * Remove fractional part which will be ignored.
@@ -95,6 +99,9 @@ public class Convert {
 
       } else if (Date.class.isAssignableFrom(type)) {
         return convertDate(text);
+
+      } else if (UUID.class.isAssignableFrom(type)) {
+        return UUID.fromString(text);
       }
     } catch (Exception e) {
       throw e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
@@ -106,51 +113,34 @@ public class Convert {
    * Converts text value to the specified Esql type.
    */
   public static Object toType(Object value, String type) {
-    if (type == null || type.equals("variable")) {
+    if (type == null
+     || value == null
+     || type.equals("variable")) {
       return value;
-    } else if (type.equals("bool")) {
-
-      if (value == null) {
-        return null;
-      } else if (value instanceof String s) {
-        String v = s.trim().toLowerCase();
-        return v.equals("1") || v.startsWith("t") || v.startsWith("y");
-      } else if (value instanceof Number n) {
-        return n.intValue() != 0;
-      } else {
-        return true;
-      }
 
     } else if (type.startsWith("date")) {
       return value instanceof Number n ? new Date(n.longValue())
            : value instanceof String s ? convertDate(s)
            : value;
 
-    } else if (value instanceof String s) {
+    } else {
+      String s = value.toString().trim().toLowerCase();
       return switch(type) {
+        case "bool"   -> value instanceof String   ? s.equals("1") || s.startsWith("t") || s.startsWith("y")
+                       : value instanceof Number n ? n.intValue() != 0
+                       : true;
+
         case "byte"   -> Byte   .valueOf(s);
         case "short"  -> Short  .valueOf(s);
         case "int"    -> Integer.valueOf(s);
         case "long"   -> Long   .valueOf(s);
         case "float"  -> Float  .valueOf(s);
         case "double" -> Double .valueOf(s);
-        default       -> s;
+        case "string",
+             "text"   -> value.toString();
+        case "uuid"   -> UUID.fromString(s);
+        default       -> value;
       };
-//      if (type.equals("byte")
-//       || type.equals("short")
-//       || type.equals("int")
-//       || type.equals("long")
-//       || type.equals("float")
-//       || type.equals("double")) {
-//        return Numbers.convert(s);
-//      } else {
-//        return value;
-//      }
-    } else if (type.equals("string")) {
-      return  value == null ? null : value.toString();
-
-    } else {
-      return value;
     }
   }
 
