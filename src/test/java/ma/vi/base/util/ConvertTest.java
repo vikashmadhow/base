@@ -2,8 +2,7 @@ package ma.vi.base.util;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,27 +57,24 @@ public class ConvertTest {
     assertEquals(u, Convert.toType(u.toString(), "uuid"));
     assertEquals(u, Convert.convert(u.toString(), UUID.class));
 
-    assertEquals(date(1977, Calendar.MAY, 17), Convert.toType("17-05-1977", "date"));
-    assertEquals(date(1977, Calendar.MAY, 17), Convert.toType("17-5-1977", "date"));
-    assertEquals(date(1977, Calendar.MAY, 17), Convert.toType("17 5 1977", "date"));
-    assertEquals(date(1977, Calendar.MAY, 17), Convert.toType("17 05 1977", "date"));
-    assertEquals(date(1977, Calendar.MAY, 17), Convert.toType("17-MAY-1977", "date"));
-    assertEquals(date(1977, Calendar.MAY, 17), Convert.toType("17 MAY 1977", "date"));
+    assertEquals(date(1977, 5, 17), Convert.toType("17-05-1977", "date"));
+    assertEquals(date(1977, 5, 17), Convert.toType("17-5-1977", "date"));
+    assertEquals(date(1977, 5, 17), Convert.toType("17 5 1977", "date"));
+    assertEquals(date(1977, 5, 17), Convert.toType("17 05 1977", "date"));
+    assertEquals(date(1977, 5, 17), Convert.toType("17-MAY-1977", "date"));
+    assertEquals(date(1977, 5, 17), Convert.toType("17 MAY 1977", "date"));
 
-    assertEquals(date(2077, Calendar.JUNE, 30), Convert.toType("2077-06-30", "date"));
-    assertEquals(date(2077, Calendar.JUNE, 30), Convert.toType("2077-6-30", "date"));
-    assertEquals(date(2077, Calendar.JUNE, 30), Convert.toType("2077 06 30", "date"));
-    assertEquals(date(2077, Calendar.JUNE, 30), Convert.toType("2077 6 30", "date"));
-    assertEquals(date(2077, Calendar.JUNE, 30), Convert.toType("2077 JUN 30", "date"));
-    assertEquals(date(2077, Calendar.JUNE, 30), Convert.toType("2077-JUN-30", "date"));
-    assertEquals(date(2077, Calendar.JUNE, 30), Convert.toType("2077 JUNE 30", "date"));
-    assertEquals(date(2077, Calendar.JUNE, 30), Convert.toType("2077-JUNE-30", "date"));
+    assertEquals(date(2077, 6, 30), Convert.toType("2077-06-30", "date"));
+    assertEquals(date(2077, 6, 30), Convert.toType("2077-6-30", "date"));
+    assertEquals(date(2077, 6, 30), Convert.toType("2077 06 30", "date"));
+    assertEquals(date(2077, 6, 30), Convert.toType("2077 6 30", "date"));
+    assertEquals(date(2077, 6, 30), Convert.toType("2077 JUN 30", "date"));
+    assertEquals(date(2077, 6, 30), Convert.toType("2077-JUN-30", "date"));
+    assertEquals(date(2077, 6, 30), Convert.toType("2077 JUNE 30", "date"));
+    assertEquals(date(2077, 6, 30), Convert.toType("2077-JUNE-30", "date"));
   }
 
-  private static Date date(int year, int month, int day) {
-    Calendar c = Calendar.getInstance();
-    c.set(year, month, day, 0, 0, 0);
-    c.set(Calendar.MILLISECOND, 0);
-    return c.getTime();
+  private static LocalDate date(int year, int month, int day) {
+    return LocalDate.of(year, month, day);
   }
 }

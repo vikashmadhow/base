@@ -11,6 +11,8 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -54,8 +56,8 @@ public class Convert {
    * formatter found.
    */
   public static Format defaultFormatter(Class<?> type) {
-    return Date  .class.isAssignableFrom(type) ? DATE_FORMATTER
-         : Number.class.isAssignableFrom(type) ? (Numbers.isIntegral(type) ? INTEGER_FORMATTER : DECIMAL_FORMATTER)
+    return LocalDate.class.isAssignableFrom(type) ? DATE_FORMATTER
+         : Number.class.isAssignableFrom(type)    ? (Numbers.isIntegral(type) ? INTEGER_FORMATTER : DECIMAL_FORMATTER)
          : null;
   }
 
@@ -87,22 +89,12 @@ public class Convert {
           }
         }
         return type.getConstructor(String.class).newInstance(text);
-
-      } else if (Boolean.class.isAssignableFrom(type)) {
-        return type.getConstructor(String.class).newInstance(text);
-
-      } else if (String.class.isAssignableFrom(type)) {
-        return text;
-
-      } else if (Character.class.isAssignableFrom(type)) {
-        return text.charAt(0);
-
-      } else if (Date.class.isAssignableFrom(type)) {
-        return convertDate(text);
-
-      } else if (UUID.class.isAssignableFrom(type)) {
-        return UUID.fromString(text);
       }
+      else if (Boolean  .class.isAssignableFrom(type)) { return type.getConstructor(String.class).newInstance(text); }
+      else if (String   .class.isAssignableFrom(type)) { return text; }
+      else if (Character.class.isAssignableFrom(type)) { return text.charAt(0); }
+      else if (LocalDate.class.isAssignableFrom(type)) { return convertDate(text); }
+      else if (UUID     .class.isAssignableFrom(type)) { return UUID.fromString(text); }
     } catch (Exception e) {
       throw e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
     }
@@ -118,9 +110,27 @@ public class Convert {
      || type.equals("variable")) {
       return value;
 
-    } else if (type.startsWith("date")) {
-      return value instanceof Number n ? new Date(n.longValue())
+    } else if (type.equals("date")) {
+      return value instanceof Number n ? LocalDate.ofEpochDay(Duration.ofMillis(n.longValue()).toDays())
            : value instanceof String s ? convertDate(s)
+           : value instanceof Date   d ? d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+           : value;
+
+    } else if (type.equals("time")) {
+      return value instanceof Number n ? LocalDateTime.ofEpochSecond(Duration.ofMillis(n.longValue()).toSeconds(),
+                                                                     Duration.ofMillis(n.longValue()).toNanosPart(),
+                                                                     ZoneOffset.of(ZoneId.systemDefault().getId()))
+                                                      .toLocalTime()
+           : value instanceof String s ? DateTimeFormatter.ISO_LOCAL_TIME.parse(s)
+           : value instanceof Date   d ? d.toInstant().atZone(ZoneId.systemDefault()).toLocalTime()
+           : value;
+
+    } else if (type.equals("datetime")) {
+      return value instanceof Number n ? LocalDateTime.ofEpochSecond(Duration.ofMillis(n.longValue()).toSeconds(),
+                                                                     Duration.ofMillis(n.longValue()).toNanosPart(),
+                                                                     ZoneOffset.of(ZoneId.systemDefault().getId()))
+           : value instanceof String s ? DateTimeFormatter.ISO_LOCAL_DATE_TIME.parse(s)
+           : value instanceof Date   d ? d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
            : value;
 
     } else {
@@ -129,7 +139,6 @@ public class Convert {
         case "bool"   -> value instanceof String   ? s.equals("1") || s.startsWith("t") || s.startsWith("y")
                        : value instanceof Number n ? n.intValue() != 0
                        : true;
-
         case "byte"   -> Byte   .valueOf(s);
         case "short"  -> Short  .valueOf(s);
         case "int"    -> Integer.valueOf(s);
@@ -148,22 +157,15 @@ public class Convert {
    * Converts the value into a form that can be concatenated into a SQL statement.
    */
   public static String sqlParameter(Object value) {
-    if (value == null) {
-      return "NULL";
-    } else if (value instanceof Boolean) {
-      boolean v = (Boolean) value;
-      return v ? "TRUE" : "FALSE";
-    } else if (value instanceof Date) {
-      return Dates.toSqlDateLiteral((Date) value);
-    } else if (value instanceof Number) {
-      return value.toString();
-    } else if (value instanceof Character) {
-      return "'" + value + "'";
-    } else if (value instanceof String) {
-      return "'" + Escape.escapeSqlString((String) value) + "'";
-    } else {
-      throw new IllegalArgumentException(value.getClass() + " cannot be converted to a form supported by SQL");
-    }
+    if      (value == null)                     { return "NULL"; }
+    else if (value instanceof Boolean b)        { return b ? "TRUE" : "FALSE"; }
+    else if (value instanceof LocalDate d)      { return Dates.toSqlDateLiteral(d); }
+    else if (value instanceof LocalTime t)      { return Dates.toSqlDateLiteral(t); }
+    else if (value instanceof LocalDateTime dt) { return Dates.toSqlDateLiteral(dt); }
+    else if (value instanceof Number)           { return value.toString(); }
+    else if (value instanceof Character)        { return "'" + value + "'"; }
+    else if (value instanceof String)           { return "'" + Escape.escapeSqlString((String) value) + "'"; }
+    else throw new IllegalArgumentException(value.getClass() + " cannot be converted to a form supported by SQL");
   }
 
   /**
@@ -173,24 +175,17 @@ public class Convert {
    * @return The converted value or null if the value was null.
    * @throws IllegalArgumentException If the value could not be converted to a date.
    */
-  public static Date convertDate(String date) throws IllegalArgumentException {
-    T2<Date, Boolean> converted = convertInternal(date);
-    if (converted.b) {
-      return converted.a;
-    } else {
-      throw new IllegalArgumentException("'" + date + "' could not be converted to a date");
-    }
+  public static LocalDate convertDate(String date) throws IllegalArgumentException {
+    T2<LocalDate, Boolean> converted = convertInternal(date);
+    if (converted.b) return converted.a;
+    else             throw new IllegalArgumentException("'" + date + "' could not be converted to a date");
   }
 
   /**
    * Returns true if the provided date in string format can be converted to a valid date.
    */
   public static boolean canConvert(String date) {
-    if (date == null) {
-      return true;
-    } else {
-      return convertInternal(date).b;
-    }
+    return date == null || convertInternal(date).b;
   }
 
   /**
@@ -198,9 +193,11 @@ public class Convert {
    * the converted date if successfully converted (or null otherwise), and the second
    * value is true when the conversion is successful, or false otherwise.
    */
-  private static T2<Date, Boolean> convertInternal(String value) {
+  private static T2<LocalDate, Boolean> convertInternal(String value) {
     if (value != null) {
-      // remove all unnecessary characters prior to conversion
+      /*
+       * Remove all unnecessary characters prior to conversion.
+       */
       boolean yearFound = false;
       boolean monthFound = false;
       boolean dayFound = false;
@@ -217,7 +214,7 @@ public class Convert {
           compressed.insert(0, token + " ");
 
           /*
-           * push probable month position correspondingly
+           * Push probable month position correspondingly.
            */
           if (probableMonthStart != -1) {
             probableMonthStart += token.length() + 1;
@@ -228,7 +225,7 @@ public class Convert {
             monthFound = true;
           } else if (DAY_OR_MONTH_PATTERN.matcher(token).matches()) {
             /*
-             * if we have already seen a month
+             * If we have already seen a month.
              */
             if (monthFound) {
               dayFound = true;
@@ -236,7 +233,7 @@ public class Convert {
               int number = parseInt(token);
               if ((dayFound || yearFound) && probableMonthStart == -1 && number > 0 && number <= 12) {
                 /*
-                 * since we have already seen the year, this is a probable month
+                 * Since we have already seen the year, this is a probable month.
                  */
                 probableMonthStart = compressed.length();
                 probableMonthEnd = probableMonthStart + token.length();
@@ -259,7 +256,9 @@ public class Convert {
       DateFormat[] formats = yearFound ? DATE_FORMATS_WITH_FOUR_DIGITS_YEAR : DATE_FORMATS_WITH_TWO_DIGITS_YEAR;
       for (DateFormat formatter : formats) {
         try {
-          Date date = formatter.parse(reformatted);
+          LocalDate date = formatter.parse(reformatted).toInstant()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate();
           return new T2<>(date, Boolean.TRUE);
         } catch (Exception ignore) {
         }
@@ -275,7 +274,9 @@ public class Convert {
           } else {
             formatter = ddMMyyyy;
           }
-          Date date = formatter.parse(reformatted);
+          LocalDate date = formatter.parse(reformatted).toInstant()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate();
           return new T2<>(date, Boolean.TRUE);
         } catch (Exception ignore) {
         }
@@ -384,18 +385,6 @@ public class Convert {
    */
   public static final String DATE_FORMAT = "dd-MMM-yyyy"; // "dd\u2011MMM\u2011yy";
 
-  public static final String ISO_DATE_FORMAT = "yyyy-MM-dd";
-
-  /**
-   * Format for time.
-   */
-  public static final String TIME_FORMAT = "HH:mm";
-
-  /**
-   * Format for timestamps.
-   */
-  public static final String TIMESTAMP_FORMAT = DATE_FORMAT + " " + TIME_FORMAT;
-
   /**
    * Integer format.
    */
@@ -420,13 +409,4 @@ public class Convert {
    * Default date formatter.
    */
   public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
-
-  public static final SimpleDateFormat ISO_DATE_FORMATTER = new SimpleDateFormat(ISO_DATE_FORMAT);
-
-  /**
-   * Default date formatter.
-   */
-  public static final SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
-
-  public static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
 }

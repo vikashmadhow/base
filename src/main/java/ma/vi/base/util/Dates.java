@@ -4,9 +4,13 @@
 
 package ma.vi.base.util;
 
-import java.text.SimpleDateFormat;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Utility functions to work with dates.
@@ -17,71 +21,76 @@ public class Dates {
   /**
    * Given year, return a date for the first day of the first month at 00:00:00.
    */
-  public static Date of(int year) {
+  public static LocalDateTime of(int year) {
     return of(year, 1, 1, 0, 0, 0, 0);
   }
 
-  public static Date of(int year, int month) {
+  public static LocalDateTime of(int year, int month) {
     return of(year, month, 1, 0, 0, 0, 0);
   }
 
-  public static Date of(int year, int month, int day) {
+  public static LocalDateTime of(int year, int month, int day) {
     return of(year, month, day, 0, 0, 0, 0);
   }
 
-  public static Date of(int year, int month, int day, int hour) {
+  public static LocalDateTime of(int year, int month, int day, int hour) {
     return of(year, month, day, hour, 0, 0, 0);
   }
 
-  public static Date of(int year, int month, int day, int hour, int minute) {
+  public static LocalDateTime of(int year, int month, int day, int hour, int minute) {
     return of(year, month, day, hour, minute, 0, 0);
   }
 
-  public static Date of(int year, int month, int day, int hour, int minute, int second) {
+  public static LocalDateTime of(int year, int month, int day, int hour, int minute, int second) {
     return of(year, month, day, hour, minute, second, 0);
   }
 
-  public static Date of(int year, int month, int day, int hour, int minute, int second, int milli) {
-    Calendar date = Calendar.getInstance();
-    date.set(Calendar.YEAR, year);
-    date.set(Calendar.MONTH, month - 1);
-    date.set(Calendar.DAY_OF_MONTH, day);
-    date.set(Calendar.HOUR_OF_DAY, hour);
-    date.set(Calendar.MINUTE, minute);
-    date.set(Calendar.SECOND, second);
-    date.set(Calendar.MILLISECOND, milli);
-    return date.getTime();
+  public static LocalDateTime of(int year, int month, int day, int hour, int minute, int second, int milli) {
+    return LocalDateTime.of(year, month, day, hour, minute, second, milli * 1000000);
   }
 
   /**
    * Converts a normal java.util.Date to a java.sql.Date.
    */
-  public static java.sql.Date toSqlDate(Date date) {
-    return new java.sql.Date(date.getTime());
+  public static Date toSqlDate(LocalDate date) {
+    return Date.valueOf(date);
+  }
+
+  public static Timestamp toSqlTimestamp(LocalDateTime time) {
+    return Timestamp.valueOf(time);
   }
 
   public static Object toSqlDate(Object value) {
-    if (value instanceof Date) {
-      return toSqlDate((Date) value);
-    } else {
-      return value;
-    }
+    return value instanceof LocalDate     d ? toSqlDate(d)
+         : value instanceof LocalDateTime t ? toSqlTimestamp(t)
+         : value;
   }
 
   /**
    * Returns the date as a proper SQL literal for embedding in a query.
    * The literal is already enclosed in single-quotes.
    */
-  public static String toSqlDateLiteral(Date date) {
-    if (date == null) {
-      return "NULL";
-    } else {
-      return '\'' + ISO_8601_DATE_FORMAT.format(date) + '\'';
-    }
+  public static String toSqlDateLiteral(LocalDate date) {
+    return date == null ? "NULL"
+         : '\'' + DateTimeFormatter.ISO_LOCAL_DATE.format(date) + '\'';
+  }
+
+  public static String toSqlDateLiteral(LocalTime time) {
+    return time == null ? "NULL"
+         : '\'' + DateTimeFormatter.ISO_LOCAL_TIME.format(time) + '\'';
+  }
+
+  /**
+   * Returns the date as a proper SQL literal for embedding in a query.
+   * The literal is already enclosed in single-quotes.
+   */
+  public static String toSqlDateLiteral(LocalDateTime date) {
+    return date == null ? "NULL"
+         : '\'' + DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(date) + '\'';
   }
 
   public static String toSqlDateLiteral() {
-    return toSqlDateLiteral(new Date());
+    return toSqlDateLiteral(LocalDate.now());
   }
 
   /**
@@ -169,9 +178,4 @@ public class Dates {
     }
     return year;
   }
-
-  /**
-   * ISO-8601 format yyyy-MM-dd which is recommended literal date format for SQL.
-   */
-  public static final SimpleDateFormat ISO_8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 }

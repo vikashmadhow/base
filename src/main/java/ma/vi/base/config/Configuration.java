@@ -263,7 +263,13 @@ public class Configuration {
     }
   }
 
-  public static final Configuration EMPTY = new Configuration(Collections.emptyMap());
-
+  /**
+   * The internal map holding the configuration keys and values.
+   */
   private final Map<String, Object> configuration;
+
+  /**
+   * An empty configuration.
+   */
+  public static final Configuration EMPTY = new Configuration(Collections.emptyMap());
 }
