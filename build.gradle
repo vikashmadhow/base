@@ -126,13 +126,13 @@ publishing {
   }
 }
 
-signing {
-  sign publishing.publications.mavenJava
-}
+//signing {
+//  sign publishing.publications.mavenJava
+//}
 
-tasks.withType(Sign) {
-  onlyIf { isReleaseVersion }
-}
+//tasks.withType(Sign) {
+//  onlyIf { isReleaseVersion }
+//}
 
 //nexusStaging {
 //  packageGroup = group
