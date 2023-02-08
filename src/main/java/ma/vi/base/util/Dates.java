@@ -9,7 +9,9 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 
 /**
@@ -212,4 +214,22 @@ public class Dates {
   public static boolean isBetween(LocalDate date, String    from, LocalDate to) { return isSameOrAfter(date, from) && isSameOrBefore(date, to); }
   public static boolean isBetween(String    date, LocalDate from, LocalDate to) { return isSameOrAfter(date, from) && isSameOrBefore(date, to); }
   public static boolean isBetween(LocalDate date, LocalDate from, LocalDate to) { return isSameOrAfter(date, from) && isSameOrBefore(date, to); }
+
+  public static long daysBetween(String    from, String    to) { return daysBetween(LocalDate.parse(from), LocalDate.parse(to)); }
+  public static long daysBetween(LocalDate from, String    to) { return daysBetween(from, LocalDate.parse(to)); }
+  public static long daysBetween(String    from, LocalDate to) { return daysBetween(LocalDate.parse(from), to); }
+  public static long daysBetween(LocalDate from, LocalDate to) { return ChronoUnit.DAYS.between(from, to); }
+
+  public static long monthsBetween(String    from, String    to) { return monthsBetween(LocalDate.parse(from), LocalDate.parse(to)); }
+  public static long monthsBetween(LocalDate from, String    to) { return monthsBetween(from, LocalDate.parse(to)); }
+  public static long monthsBetween(String    from, LocalDate to) { return monthsBetween(LocalDate.parse(from), to); }
+  public static long monthsBetween(LocalDate from, LocalDate to) { return ChronoUnit.MONTHS.between(from, to); }
+
+  public static long yearsBetween(String    from, String    to) { return yearsBetween(LocalDate.parse(from), LocalDate.parse(to)); }
+  public static long yearsBetween(LocalDate from, String    to) { return yearsBetween(from, LocalDate.parse(to)); }
+  public static long yearsBetween(String    from, LocalDate to) { return yearsBetween(LocalDate.parse(from), to); }
+  public static long yearsBetween(LocalDate from, LocalDate to) { return ChronoUnit.YEARS.between(from, to); }
+
+  public static String format(LocalDate date)                { return format(date, "dd-MMM-yyyy"); }
+  public static String format(LocalDate date, String format) { return DateTimeFormatter.ofPattern(format).format(date); }
 }
