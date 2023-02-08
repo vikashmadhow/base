@@ -178,4 +178,38 @@ public class Dates {
     }
     return year;
   }
+
+  public static boolean isBefore(String    date1, String    date2) { return isBefore(LocalDate.parse(date1), LocalDate.parse(date2)); }
+  public static boolean isBefore(LocalDate date1, String    date2) { return isBefore(date1, LocalDate.parse(date2)); }
+  public static boolean isBefore(String    date1, LocalDate date2) { return isBefore(LocalDate.parse(date1), date2); }
+  public static boolean isBefore(LocalDate date1, LocalDate date2) { return date1.isBefore(date2); }
+
+  public static boolean isAfter(String    date1, String    date2) { return isAfter(LocalDate.parse(date1), LocalDate.parse(date2)); }
+  public static boolean isAfter(LocalDate date1, String    date2) { return isAfter(date1, LocalDate.parse(date2)); }
+  public static boolean isAfter(String    date1, LocalDate date2) { return isAfter(LocalDate.parse(date1), date2); }
+  public static boolean isAfter(LocalDate date1, LocalDate date2) { return date1.isAfter(date2); }
+
+  public static boolean isSame(String    date1, String    date2) { return isSame(LocalDate.parse(date1), LocalDate.parse(date2)); }
+  public static boolean isSame(LocalDate date1, String    date2) { return isSame(date1, LocalDate.parse(date2)); }
+  public static boolean isSame(String    date1, LocalDate date2) { return isSame(LocalDate.parse(date1), date2); }
+  public static boolean isSame(LocalDate date1, LocalDate date2) { return date1.isEqual(date2); }
+
+  public static boolean isSameOrBefore(String    date1, String    date2) { return isSameOrBefore(LocalDate.parse(date1), LocalDate.parse(date2)); }
+  public static boolean isSameOrBefore(LocalDate date1, String    date2) { return isSameOrBefore(date1, LocalDate.parse(date2)); }
+  public static boolean isSameOrBefore(String    date1, LocalDate date2) { return isSameOrBefore(LocalDate.parse(date1), date2); }
+  public static boolean isSameOrBefore(LocalDate date1, LocalDate date2) { return isSame(date1, date2) || isBefore(date1, date2); }
+
+  public static boolean isSameOrAfter(String    date1, String    date2) { return isSameOrAfter(LocalDate.parse(date1), LocalDate.parse(date2)); }
+  public static boolean isSameOrAfter(LocalDate date1, String    date2) { return isSameOrAfter(date1, LocalDate.parse(date2)); }
+  public static boolean isSameOrAfter(String    date1, LocalDate date2) { return isSameOrAfter(LocalDate.parse(date1), date2); }
+  public static boolean isSameOrAfter(LocalDate date1, LocalDate date2) { return isSame(date1, date2) || isAfter(date1, date2); }
+
+  public static boolean isBetween(String    date, String    from, String    to) { return isSameOrAfter(date, from) && isSameOrBefore(date, to); }
+  public static boolean isBetween(LocalDate date, String    from, String    to) { return isSameOrAfter(date, from) && isSameOrBefore(date, to); }
+  public static boolean isBetween(String    date, LocalDate from, String    to) { return isSameOrAfter(date, from) && isSameOrBefore(date, to); }
+  public static boolean isBetween(String    date, String    from, LocalDate to) { return isSameOrAfter(date, from) && isSameOrBefore(date, to); }
+  public static boolean isBetween(LocalDate date, LocalDate from, String    to) { return isSameOrAfter(date, from) && isSameOrBefore(date, to); }
+  public static boolean isBetween(LocalDate date, String    from, LocalDate to) { return isSameOrAfter(date, from) && isSameOrBefore(date, to); }
+  public static boolean isBetween(String    date, LocalDate from, LocalDate to) { return isSameOrAfter(date, from) && isSameOrBefore(date, to); }
+  public static boolean isBetween(LocalDate date, LocalDate from, LocalDate to) { return isSameOrAfter(date, from) && isSameOrBefore(date, to); }
 }

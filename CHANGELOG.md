@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2023-02-07
+### Added
+- Polymorphic `LocalDate` comparison functions added to utility class `Dates`. 
+  Any of the parameter to these functions can be a `LocalDate` or a `String`; the
+  latter will be parsed to a `LocalDate` prior to the comparison.
+- `Values` utility class containing general functions for working with values.
+- `coalesce` function in `Values` returns first non-null value in the parameter
+  list.
+
 ## [0.5.0] - 2022-06-16
 ### Added
 - `Dates` and `Convert` moved from old `Date` classes to Java 8 time library 
