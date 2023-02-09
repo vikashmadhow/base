@@ -7,6 +7,8 @@ package ma.vi.base.util;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import static java.math.RoundingMode.HALF_UP;
+
 /**
  * Utility functions on numbers.
  *
@@ -301,6 +303,20 @@ public class Numbers {
       }
       return max;
     }
+  }
+
+  public static double round(double value) {
+    return round(value, 0);
+  }
+
+  public static double round(double value, int decimals) {
+//    NumberFormat nf = NumberFormat.getNumberInstance();
+//    nf.setRoundingMode(HALF_UP);
+//    nf.setMaximumFractionDigits(decimals);
+//    return parseDouble(nf.format(value));
+    return new BigDecimal(String.valueOf(value))
+                .setScale(decimals, HALF_UP)
+                .doubleValue();
   }
 
   private Numbers() {}
