@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
@@ -20,6 +19,10 @@ import java.util.Calendar;
  * @author vikash.madhow@gmail.com
  */
 public class Dates {
+  public static LocalDate     date() { return LocalDate.now(); }
+  public static LocalTime     time() { return LocalTime.now(); }
+  public static LocalDateTime now () { return LocalDateTime.now(); }
+
   /**
    * Given year, return a date for the first day of the first month at 00:00:00.
    */
@@ -229,6 +232,54 @@ public class Dates {
   public static long yearsBetween(LocalDate to, String    from) { return yearsBetween(to, LocalDate.parse(from)); }
   public static long yearsBetween(String    to, LocalDate from) { return yearsBetween(LocalDate.parse(to), from); }
   public static long yearsBetween(LocalDate to, LocalDate from) { return ChronoUnit.YEARS.between(from, to); }
+
+  public static LocalDate startOfMonth(LocalDate date) {
+    return LocalDate.of(date.getYear(), date.getMonth(), 1);
+  }
+  public static LocalDateTime startOfMonth(LocalDateTime date) {
+    return LocalDateTime.of(date.getYear(), date.getMonth(), 1,
+                            date.getHour(), date.getMinute(), date.getSecond(),
+                            date.getNano());
+  }
+
+  public static LocalDate endOfMonth(LocalDate date) {
+    var month = date.getMonthValue();
+    if (month == 12) {
+      return LocalDate.of(date.getYear() + 1, 1, 1).minusDays(1);
+    } else {
+      return LocalDate.of(date.getYear(), month + 1, 1).minusDays(1);
+    }
+  }
+  public static LocalDateTime endOfMonth(LocalDateTime date) {
+    var month = date.getMonthValue();
+    if (month == 12) {
+      return LocalDateTime.of(date.getYear() + 1, 1, 1,
+                              date.getHour(), date.getMinute(), date.getSecond(),
+                              date.getNano()).minusDays(1);
+    } else {
+        return LocalDateTime.of(date.getYear(), month + 1, 1,
+                                date.getHour(), date.getMinute(), date.getSecond(),
+                                date.getNano()).minusDays(1);
+    }
+  }
+
+  public static LocalDate startOfYear(LocalDate date) {
+    return LocalDate.of(date.getYear(), 1, 1);
+  }
+  public static LocalDateTime startOfYear(LocalDateTime date) {
+    return LocalDateTime.of(date.getYear(), 1, 1,
+                            date.getHour(), date.getMinute(), date.getSecond(),
+                            date.getNano());
+  }
+
+  public static LocalDate endOfYear(LocalDate date) {
+    return LocalDate.of(date.getYear(), 12, 31);
+  }
+  public static LocalDateTime endOfYear(LocalDateTime date) {
+    return LocalDateTime.of(date.getYear(), 12, 31,
+                            date.getHour(), date.getMinute(), date.getSecond(),
+                            date.getNano());
+  }
 
   public static String format(LocalDate date)                { return format(date, "dd-MMM-yyyy"); }
   public static String format(LocalDate date, String format) { return DateTimeFormatter.ofPattern(format).format(date); }

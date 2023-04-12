@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.4] - 2023-04-12
+### Added
+- Functions `date`, `time` and `now` returning the current date, the current time and 
+  the current date-time, respectively, added to `Dates` class.
+- Functions `startOfMonth`, `endOfMonth`, `startOfYear` and `endOfYear` returning the 
+  respective endpoint of the given date added to `Dates` class.
+
 ## [0.5.3] - 2023-02-09
 ### Added
 - `round` method added to `Numbers` to round doubles up to some number of fractional
