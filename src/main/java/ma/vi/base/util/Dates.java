@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
@@ -20,6 +19,10 @@ import java.util.Calendar;
  * @author vikash.madhow@gmail.com
  */
 public class Dates {
+  public static LocalDate     date() { return LocalDate.now(); }
+  public static LocalTime     time()  { return LocalTime.now(); }
+  public static LocalDateTime now ()  { return LocalDateTime.now(); }
+
   /**
    * Given year, return a date for the first day of the first month at 00:00:00.
    */
