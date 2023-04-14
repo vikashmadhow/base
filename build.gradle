@@ -53,8 +53,8 @@ dependencies {
   // This dependency is exported to consumers, that is to say found on their compile classpath.
   implementation("org.apache.commons:commons-lang3:3.12.0")
   implementation("com.fasterxml.jackson.core:jackson-core:2.13.1")
-  implementation("com.fasterxml.woodstox:woodstox-core:6.2.8")
-  implementation("org.yaml:snakeyaml:1.30")
+  implementation("com.fasterxml.woodstox:woodstox-core:6.4.0")
+  implementation("org.yaml:snakeyaml:2.0")
   implementation("org.bouncycastle:bcprov-jdk15on:1.69")
 
   // Use JUnit test framework
