@@ -6,6 +6,7 @@ package ma.vi.base.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 
 import static java.math.RoundingMode.HALF_UP;
 
@@ -320,4 +321,19 @@ public class Numbers {
   }
 
   private Numbers() {}
+
+  public static final DecimalFormat MONEY_FORMAT;
+  public static final DecimalFormat INTEGER_FORMAT;
+
+  static {
+    MONEY_FORMAT = new DecimalFormat();
+    MONEY_FORMAT.setGroupingUsed(true);
+    MONEY_FORMAT.setMinimumFractionDigits(2);
+    MONEY_FORMAT.setMaximumFractionDigits(2);
+
+    INTEGER_FORMAT = new DecimalFormat();
+    INTEGER_FORMAT.setGroupingUsed(true);
+    INTEGER_FORMAT.setMinimumFractionDigits(0);
+    INTEGER_FORMAT.setMaximumFractionDigits(0);
+  }
 }
