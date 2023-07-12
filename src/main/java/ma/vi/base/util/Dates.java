@@ -281,6 +281,27 @@ public class Dates {
                             date.getNano());
   }
 
+  public static String monthName(int month) {
+    return MONTH_NAMES[month - 1];
+  }
+
+  public static String monthShortName(int month) {
+    return MONTH_SHORT_NAMES[month - 1];
+  }
+
   public static String format(LocalDate date)                { return format(date, "dd-MMM-yyyy"); }
   public static String format(LocalDate date, String format) { return DateTimeFormatter.ofPattern(format).format(date); }
+
+  public static String format(LocalDateTime date)                { return format(date, "dd-MMM-yyyy HH:mm"); }
+  public static String format(LocalDateTime date, String format) { return DateTimeFormatter.ofPattern(format).format(date); }
+
+  private static final String[] MONTH_NAMES = new String[] {
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  };
+
+  private static final String[] MONTH_SHORT_NAMES = new String[] {
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  };
 }
