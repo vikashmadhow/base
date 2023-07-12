@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.6] - 2023-07-12
+### Added
+- `Dates` `format` method supports `LocalDateTime` (in addition to `LocalDate`).
+- `Dates` `monthName` method returns the month name of an integer month.
+- `Dates` `shortMonthName` method returns the short name of an integer month.
+
 ## [0.5.5] - 2023-07-07
 ### Added
 - Integer and money formatter in `Numbers` utility class.
