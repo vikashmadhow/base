@@ -5,6 +5,7 @@
 package ma.vi.base.util;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -55,18 +56,29 @@ public class Dates {
   }
 
   /**
-   * Converts a normal java.util.Date to a java.sql.Date.
+   * Converts a LocalDate to a java.sql.Date.
    */
   public static Date toSqlDate(LocalDate date) {
     return Date.valueOf(date);
   }
 
+  /**
+   * Converts a LacalTime to a java.sql.Time.
+   */
+  public static Time toSqlTime(LocalTime time) {
+    return new Time(time.getHour(), time.getMinute(), time.getSecond());
+  }
+
+  /**
+   * Converts a LacalDateTime to a java.sql.Timestamp.
+   */
   public static Timestamp toSqlTimestamp(LocalDateTime time) {
     return Timestamp.valueOf(time);
   }
 
-  public static Object toSqlDate(Object value) {
+  public static Object toSqlInstant(Object value) {
     return value instanceof LocalDate     d ? toSqlDate(d)
+         : value instanceof LocalTime     t ? toSqlTime(t)
          : value instanceof LocalDateTime t ? toSqlTimestamp(t)
          : value;
   }
