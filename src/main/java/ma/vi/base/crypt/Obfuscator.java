@@ -38,6 +38,9 @@ public class Obfuscator {
       if (PASSWORD_CHARS_MAP.containsKey(c)) {
         int repPos = Math.floorMod(PASSWORD_CHARS_MAP.get(c) + shift(i), PASSWORD_CHARS.length);
         obfuscated.append(PASSWORD_CHARS[repPos]);
+      } else if (PASSWORD_CHARS2_MAP.containsKey(c)) {
+        int repPos = Math.floorMod(PASSWORD_CHARS2_MAP.get(c) + shift(i), PASSWORD_CHARS2.length);
+        obfuscated.append(PASSWORD_CHARS2[repPos]);
       } else {
         obfuscated.append(c);
       }
@@ -52,6 +55,9 @@ public class Obfuscator {
       if (PASSWORD_CHARS_MAP.containsKey(c)) {
         int repPos = Math.floorMod(PASSWORD_CHARS_MAP.get(c) - shift(i / 2), PASSWORD_CHARS.length);
         unobfuscated.append(PASSWORD_CHARS[repPos]);
+      } else if (PASSWORD_CHARS2_MAP.containsKey(c)) {
+        int repPos = Math.floorMod(PASSWORD_CHARS2_MAP.get(c) - shift(i / 2), PASSWORD_CHARS2.length);
+        unobfuscated.append(PASSWORD_CHARS2[repPos]);
       } else {
         unobfuscated.append(c);
       }
@@ -63,11 +69,16 @@ public class Obfuscator {
     return (i + 3) * (i % 2 == 0 ? 1 : -1);
   }
 
-  private static final char[] PASSWORD_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
+  private static final char[] PASSWORD_CHARS  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
+  private static final char[] PASSWORD_CHARS2 = "~`!@#$%^&*()_-=+[]{}|?<>.,:;\\/".toCharArray();
 
   private static final Map<Character, Integer> PASSWORD_CHARS_MAP =
       range(0, PASSWORD_CHARS.length).boxed()
                                      .collect(toMap(i -> PASSWORD_CHARS[i], identity()));
+
+  private static final Map<Character, Integer> PASSWORD_CHARS2_MAP =
+      range(0, PASSWORD_CHARS2.length).boxed()
+                                      .collect(toMap(i -> PASSWORD_CHARS2[i], identity()));
 
   private static final Random random = new Random();
 
@@ -76,7 +87,7 @@ public class Obfuscator {
       System.out.println("Usage: Obfuscator [-u] <text>");
       System.out.println("Obfuscates the text or if -u option is present, unobfuscates it");
     } else {
-      boolean obfuscate = args.length == 1 || !args[0].trim().toLowerCase().equals("-u");
+      boolean obfuscate = args.length == 1 || !args[0].trim().equalsIgnoreCase("-u");
       String text = args[args.length - 1];
       System.out.println(obfuscate ? obfuscate(text) : unobfuscate(text));
     }
