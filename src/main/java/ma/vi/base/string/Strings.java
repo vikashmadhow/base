@@ -53,6 +53,85 @@ public class Strings {
 //        private int currentPos = -1;
 //    }
 
+  public static String numberToWords(Number n) {
+    return numberToWords(n.longValue());
+  }
+
+  /**
+   * Converts a number to words in english. Copied and modified from:
+   * https://www.geeksforgeeks.org/convert-number-to-words/
+   */
+  public static String numberToWords(long n) {
+    long limit = 1_000_000_000_000L, currHun, t = 0;
+    if (n == 0)
+      return ("Zero");
+
+    String[] multiplier = {"", "Trillion", "Billion", "Million", "Thousand"};
+    String[] firstTwenty = {"", "One", "Two", "Three", "Four", "Five", "Six",
+                            "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve",
+                            "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+                            "Seventeen", "Eighteen", "Nineteen"};
+    String[] tens = {"", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy",
+                     "Eighty", "Ninety"};
+
+    if (n < 20L)
+      return firstTwenty[(int)n];
+
+    StringBuilder answer = new StringBuilder();
+    for (long i = n; i > 0; i %= limit, limit /= 1000) {
+
+      currHun = i / limit;
+      while (currHun == 0) {
+
+        // Set i as the remainder obtained when n
+        // was divided by the limit
+        i %= limit;
+
+        // Divide the limit by 1000, shifts the
+        // multiplier
+        limit /= 1000;
+
+        // Get the current value in hundreds, as
+        // English system works in hundreds
+        currHun = i / limit;
+
+        // Shift the multiplier
+        t++;
+      }
+
+      // If current hundred is greater than 99, Add
+      // the hundreds' place
+      if (currHun > 99)
+        answer.append(firstTwenty[(int) currHun / 100]).append(" Hundred ");
+
+      // Bring the current hundred to tens
+      currHun = currHun % 100;
+
+      // If the value in tens belongs to [1,19], add
+      // using the first_twenty
+      if (currHun > 0 && currHun < 20)
+        answer.append(firstTwenty[(int) currHun]).append(" ");
+
+        // If curr_hun is now a multiple of 10, but not
+        // 0 Add the tens' value using the tens array
+      else if (currHun % 10 == 0 && currHun != 0)
+        answer.append(tens[(int) currHun / 10 - 1]).append(" ");
+
+        // If the value belongs to [21,99], excluding
+        // the multiples of 10 Get the ten's place and
+        // one's place, and print using the first_twenty
+        // array
+      else if (currHun > 20 && currHun < 100)
+        answer.append(tens[(int) currHun / 10 - 1]).append(" ").append(firstTwenty[(int) currHun % 10]).append(" ");
+
+      // If Multiplier has not become less than 1000,
+      // shift it
+      if (t < 4)
+        answer.append(multiplier[(int) ++t]).append(" ");
+    }
+    return capFirst(answer.toString().toLowerCase());
+  }
+
   public static String shorten(String text) {
     return shorten(text, 20, "...");
   }
