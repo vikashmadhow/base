@@ -77,6 +77,11 @@ test {
   }
 }
 
+group = 'ma.vi'
+sourceCompatibility = JavaVersion.VERSION_17
+version = "0.5.8"
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
 projectFilestatistics {
   // the files to include in the generation of the statistics
   includes = [
@@ -115,6 +120,12 @@ projectFilestatistics {
   // if you require to over-ride how single and multi-line comments work, or
   // need to add in some extensions which aren't built in...
   // propertyFile = 'over-ride.properties'
+}
+
+java {
+  // modularity.inferModulePath = true
+  withJavadocJar()
+  withSourcesJar()
 }
 
 publishing {
