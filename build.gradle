@@ -27,9 +27,17 @@ repositories {
   mavenCentral()
 }
 
-// java {
-//   modularity.inferModulePath = true
-// }
+group = 'ma.vi'
+version = "0.5.9"
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+java {
+  // modularity.inferModulePath = true
+  sourceCompatibility = JavaVersion.VERSION_17
+
+  withJavadocJar()
+  withSourcesJar()
+}
 
 sourceSets {
   main {
@@ -51,7 +59,6 @@ sourceSets {
 }
 
 dependencies {
-  // This dependency is exported to consumers, that is to say found on their compile classpath.
   implementation("org.apache.commons:commons-lang3:3.12.0")
   implementation("com.fasterxml.jackson.core:jackson-core:2.13.1")
   implementation("com.fasterxml.woodstox:woodstox-core:6.4.0")
@@ -69,11 +76,6 @@ test {
     events "passed", "skipped", "failed"
   }
 }
-
-group = 'ma.vi'
-sourceCompatibility = JavaVersion.VERSION_17
-version = "0.5.8"
-ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 projectFilestatistics {
   // the files to include in the generation of the statistics
@@ -113,12 +115,6 @@ projectFilestatistics {
   // if you require to over-ride how single and multi-line comments work, or
   // need to add in some extensions which aren't built in...
   // propertyFile = 'over-ride.properties'
-}
-
-java {
-  // modularity.inferModulePath = true
-  withJavadocJar()
-  withSourcesJar()
 }
 
 publishing {
