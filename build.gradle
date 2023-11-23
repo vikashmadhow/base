@@ -59,15 +59,15 @@ sourceSets {
 }
 
 dependencies {
+  // This dependency is exported to consumers, that is to say found on their compile classpath.
   implementation("org.apache.commons:commons-lang3:3.12.0")
   implementation("com.fasterxml.jackson.core:jackson-core:2.13.1")
   implementation("com.fasterxml.woodstox:woodstox-core:6.4.0")
   implementation("org.yaml:snakeyaml:2.0")
   implementation("org.bouncycastle:bcprov-jdk15on:1.69")
 
-  // Use JUnit test framework
-  testImplementation(platform('org.junit:junit-bom:5.8.2'))
-  testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
+  testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 test {
