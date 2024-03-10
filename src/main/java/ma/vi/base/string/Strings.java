@@ -66,13 +66,12 @@ public class Strings {
     if (n == 0)
       return ("Zero");
 
-    String[] multiplier = {"", "Trillion", "Billion", "Million", "Thousand"};
-    String[] firstTwenty = {"", "One", "Two", "Three", "Four", "Five", "Six",
-                            "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve",
-                            "Thirteen", "Fourteen", "Fifteen", "Sixteen",
-                            "Seventeen", "Eighteen", "Nineteen"};
-    String[] tens = {"", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy",
-                     "Eighty", "Ninety"};
+    String[] multiplier  = {"",         "Trillion", "Billion",  "Million", "Thousand"};
+    String[] firstTwenty = {"",         "One",      "Two",      "Three",   "Four",    "Five",
+                            "Six",      "Seven",    "Eight",    "Nine",    "Ten",     "Eleven",
+                            "Twelve",   "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen",
+                            "Eighteen", "Nineteen"};
+    String[] tens = {"", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
 
     if (n < 20L)
       return firstTwenty[(int)n];

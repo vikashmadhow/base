@@ -99,7 +99,7 @@ public class Numbers {
       return null;
     } else {
       number = number.trim();
-      if (number.length() == 0) {
+      if (number.isEmpty()) {
         return null;
       } else {
         number = number.replaceAll(",", "");
