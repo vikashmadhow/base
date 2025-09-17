@@ -302,11 +302,26 @@ public class Dates {
   }
 
   public static String format(LocalDate date)                { return format(date, "dd-MMM-yyyy"); }
-  public static String format(LocalDate date, String format) { return DateTimeFormatter.ofPattern(format).format(date); }
+  public static String format(LocalDate date, String format) {
+    if (format.contains("MMM")) {
+      String monthAbbr = MONTH_SHORT_NAMES[date.getMonthValue() - 1];
+      String customFormat = format.replace("MMM", "'" + monthAbbr + "'");
+      return DateTimeFormatter.ofPattern(customFormat).format(date);
+    }
+
+    return DateTimeFormatter.ofPattern(format).format(date);
+  }
 
   public static String format(LocalDateTime date)                { return format(date, "dd-MMM-yyyy HH:mm"); }
-  public static String format(LocalDateTime date, String format) { return DateTimeFormatter.ofPattern(format).format(date); }
+  public static String format(LocalDateTime date, String format) {
+    if (format.contains("MMM")) {
+      String monthAbbr = MONTH_SHORT_NAMES[date.getMonthValue() - 1];
+      String customFormat = format.replace("MMM", "'" + monthAbbr + "'");
+      return DateTimeFormatter.ofPattern(customFormat).format(date);
+    }
 
+    return DateTimeFormatter.ofPattern(format).format(date);
+  }
   private static final String[] MONTH_NAMES = new String[] {
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
