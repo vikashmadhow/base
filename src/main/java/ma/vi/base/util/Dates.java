@@ -303,7 +303,7 @@ public class Dates {
 
   public static String format(LocalDate date)                { return format(date, "dd-MMM-yyyy"); }
   public static String format(LocalDate date, String format) {
-    if (format.contains("MMM")) {
+    if (format.contains("MMM") && !format.contains("MMMM")) {
       String monthAbbr = MONTH_SHORT_NAMES[date.getMonthValue() - 1];
       String customFormat = format.replace("MMM", "'" + monthAbbr + "'");
       return DateTimeFormatter.ofPattern(customFormat).format(date);
@@ -314,7 +314,7 @@ public class Dates {
 
   public static String format(LocalDateTime date)                { return format(date, "dd-MMM-yyyy HH:mm"); }
   public static String format(LocalDateTime date, String format) {
-    if (format.contains("MMM")) {
+    if (format.contains("MMM") && !format.contains("MMMM")) {
       String monthAbbr = MONTH_SHORT_NAMES[date.getMonthValue() - 1];
       String customFormat = format.replace("MMM", "'" + monthAbbr + "'");
       return DateTimeFormatter.ofPattern(customFormat).format(date);
